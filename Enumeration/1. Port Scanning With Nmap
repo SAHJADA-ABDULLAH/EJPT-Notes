@@ -27,4 +27,3 @@ nmap -Pn -sV -O 10.4.22.173
 ### 4. Scan and Export Results in XML Format
 ```bash
 nmap -Pn -sV -O 10.4.22.173 -oX windows-ser.xml
-
