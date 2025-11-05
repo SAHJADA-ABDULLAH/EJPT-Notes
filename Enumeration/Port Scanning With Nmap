@@ -1,0 +1,29 @@
+# 🔍 Enumeration: Port Scanning and Enumeration with Nmap
+
+## 🖥️ Target Information
+**Target IP:** `10.4.22.173`  
+**Network Interface:** `eth01`
+
+---
+
+## ⚙️ Nmap Scanning Commands
+
+### 1. Default Nmap Scan
+```bash
+nmap 10.4.22.173
+```
+
+### 2. Nmap Scan without Ping Probe
+```bash
+nmap -Pn 10.4.22.173
+```
+*(Useful when ICMP is blocked.)*
+
+### 3. Scan for Service Version and OS Detection
+```bash
+nmap -Pn -sV -O 10.4.22.173
+```
+
+### 4. Scan and Export Results in XML Format
+```bash
+nmap -Pn -sV -O 10.4.22.173 -oX windows-ser.xml
