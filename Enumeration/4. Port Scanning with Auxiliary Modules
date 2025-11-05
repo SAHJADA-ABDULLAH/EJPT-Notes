@@ -135,3 +135,30 @@ run
 
 # Return to the main msfconsole prompt
 back
+
+🔍 UDP Port Scanning Module
+Objective: Perform reconnaissance to identify open UDP ports on the external target system.
+
+Metasploit Commands
+Bash
+
+# Search for UDP port scanning modules in the Metasploit database
+search udp_sweep 
+# Note: 'udp_sweep' is a common auxiliary module for identifying open UDP ports.
+
+# Select the appropriate module (using '0' as an example index from your notes)
+use 0 
+# Highly Recommended: Instead of the index '0', use the full module path
+# e.g., use auxiliary/scanner/udp/udp_sweep
+
+# View required and available configuration options
+show options
+
+# Set the target IP address
+set RHOSTS 192.86.140.3
+
+# Execute the UDP scan
+run
+
+# Return to the main msfconsole prompt
+back
