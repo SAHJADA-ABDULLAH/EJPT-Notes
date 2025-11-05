@@ -125,3 +125,25 @@ root@attackdefense:~# ls
 
 # View the contents of the retrieved file
 root@attackdefense:~# cat secret.txt
+
+
+🔒 FTP Anonymous Login Test
+Objective: Check if the target FTP service allows anonymous authentication, which often grants read access to files.
+
+Metasploit Commands
+Bash
+
+# Search for FTP auxiliary modules
+msf5 > search type:auxiliary name:ftp
+
+# Use the module specifically designed to check for anonymous login
+msf5 > use auxiliary/scanner/ftp/anonymous
+
+# View configuration options
+msf5 > show options
+
+# Set the target IP address
+msf5 > set RHOSTS 192.51.147.3
+
+# Execute the module to check for anonymous access
+msf5 > run
