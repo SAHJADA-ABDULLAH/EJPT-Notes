@@ -1,0 +1,52 @@
+## 🪟 Importing Nmap Scan Results into Metasploit
+
+### Step-by-Step Process
+
+1. **Start PostgreSQL Service**
+   ```bash
+   service postgresql start
+   ```
+
+2. **Launch Metasploit Console**
+   ```bash
+   msfconsole
+   ```
+
+3. **Check Database Status**
+   ```bash
+   db_status
+   ```
+
+4. **View Current Workspace**
+   ```bash
+   workspace
+   ```
+
+5. **Create a New Workspace**
+   ```bash
+   workspace -a win2k12
+   ```
+
+6. **Import Nmap Scan Results**
+   ```bash
+   db_import /root/windows-ser.xml
+   ```
+
+7. **Verify Imported Hosts**
+   ```bash
+   hosts
+   ```
+
+8. **List Imported Services**
+   ```bash
+   services
+   ```
+
+---
+
+## 🧩 Notes
+- The `-Pn` flag disables host discovery (treats all hosts as online).  
+- The `-sV` option detects service versions.  
+- The `-O` flag enables OS detection.  
+- The `-oX` option exports scan results in XML format (useful for importing into Metasploit).  
+- Always ensure the PostgreSQL database is running before using Metasploit’s database features.
