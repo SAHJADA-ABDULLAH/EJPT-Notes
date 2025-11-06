@@ -85,7 +85,10 @@ vim targets.txt               # Save IPs or ranges in this file
 > sudo nmap -sS -p 21,22,25,80,445,3389,8080 10.4.20.217       # Then scan ports
 
 🔹 Note: PU137,138 → UDP ping on ports 137 and 138
-
 nmap -Pn 10.5.18.135            # Force scanning even if host seems down
 nmap -Pn -p 443 10.5.18.135     # Check closed ports (to detect firewall presence) 
-                                #If output shows filtered, it indicates a firewall is present.
+                                # If output shows filtered, it indicates a firewall is present.
+🔹Service Version Detection
+nmap -Pn -sV -p 80 10.5.18.135  # Assumes the host is up (skip ping), scans TCP port 80 on 10.5.18.135 and performs service/version detection to identify the HTTP                                    server and its version.
+
+
