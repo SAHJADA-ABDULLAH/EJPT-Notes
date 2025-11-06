@@ -39,4 +39,4 @@ NSE Script Location - ls -al /usr/share/nmap/scripts | grep -i "<scriptname>"
 > nmap -Pn -sA -p445,3389 10.4.27.83                                       # ACK scan (-sA) to map firewall rules on specific ports (e.g., SMB, RDP)
 > nmap -Pn -sS -sV -F -f 10.4.27.83                                        # Fragmented Scan: Splits packets into 8-byte fragments (-f) to evade basic IDSs
 > nmap -Pn -sS -sV -F -f --mtu 8 <IP>                                      # Fragmented Scan with custom MTU (8 bytes) for explicit fragmentation
-> nmap -Pn -sS -sV -p445,3389 --data-length 200                            # Decoy Scan: Uses fake source IPs (-D) to hide true IP, adds junk data (--                -D 10.10.23.1,10.10.23.2 <Target IP>                                       data-length)
+> nmap -Pn -sS -sV -p445,3389 --data-length 200 -D 10.10.23.1,10.10.23.2 <Target IP>  # Decoy Scan: Uses fake source IPs (-D) to hide true IP, adds junk data (--                                                                                           data-length)
