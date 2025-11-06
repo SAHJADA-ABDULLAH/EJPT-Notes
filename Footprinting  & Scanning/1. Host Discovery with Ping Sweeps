@@ -57,9 +57,9 @@ Nmap is the powerful network scanner that provides various advanced ping sweep m
 * **Tool:** `nmap`
 * **Command:** `nmap -sn -PR <target_range>` (e.g., `nmap -sn -PR 192.168.1.0/24`)
 * **Mechanism:** ARP Scan (`-PR`) operates at the **Data Link Layer (Layer 2)**, sending **ARP Request** frames instead of ICMP packets.
-* **Purpose:** This method is the **most effective** for local subnets because it **bypasses firewalls** that filter Layer 3 (IP) traffic. If a host is live on the local LAN, it *must* respond to the ARP request.
+* **Purpose:** This method is the **most effective** for local subnets because it **bypasses firewalls** that filter Layer 3 (IP) traffic. If a host is live on the     local LAN, it *must* respond to the ARP request.
 
 #### Zenmap Tool
 
 * **Description:** **Zenmap** is the official **Graphical User Interface (GUI)** for Nmap.
-* **Purpose:** It allows users to run Nmap commands and visualize results (host lists, network topology, service details) without needing to use the command line, making it easier for beginners to perform host discovery and scanning.
+* **Purpose:** It allows users to run Nmap commands and visualize results (host lists, network topology, service details) without needing to use the command line,      making it easier for beginners to perform host discovery and scanning.
