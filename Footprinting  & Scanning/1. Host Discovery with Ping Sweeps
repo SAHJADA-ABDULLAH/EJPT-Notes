@@ -34,19 +34,19 @@ The `fping` utility is designed to ping multiple hosts much faster by sending pa
 | Command                                      | Usage / Description |
 
 | `fping -h`                                   | Displays the help menu for `fping` options. 
-| `fping -a -g 10.10.23.0/24 2>/dev/null`      | **Ping sweep** (`-g` for generator) of the entire `/24` subnet. The `-a` option shows only **Alive** hosts. The `2>/dev/null` redirects error messages. 
+| `fping -a -g 10.10.23.0/24 2>/dev/null`      | **Ping sweep** (`-g` for generator) of the entire `/24` subnet. The `-a` option shows only **Alive** hosts. The                                                     `2>/dev/null` redirects error messages. 
 | `fping -a 10.4.31.111`                       | Checks if the single host is **Alive** (`-a`). 
 
 ---
 
 ### 4. 🧭 `nmap` Utility Commands
 
-Nmap is the powerful network scanner that provides various advanced ping sweep methods. The key here is the **`-sn`** flag, which disables the port scan and runs **only** host discovery.
+Nmap is the powerful network scanner that provides various advanced ping sweep methods. The key here is the **`-sn`** flag, which disables the port scan and runs   **only** host discovery.
 
 | Command                                      | Usage / Description |
 
 | `nmap -sn 10.4.31.111`                       | **Host Discovery** (`-sn`) for a single IP address. 
-| `nmap -sn -Pn 10.4.31.111`                   | **Skip host discovery** (`-Pn`): Treats all hosts as online. This is used when the host is known to be up but blocks all pings. 
+| `nmap -sn -Pn 10.4.31.111`                   | **Skip host discovery** (`-Pn`): Treats all hosts as online. This is used when the host is known to be up but                                                       blocks all pings. 
 
 ---
 
