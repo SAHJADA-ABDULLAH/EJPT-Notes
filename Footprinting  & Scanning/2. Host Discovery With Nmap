@@ -46,3 +46,46 @@ Nmap offers flexible ways to scan multiple targets:
 > **Note:** The **`-sn`** option stands for "skip port scan" or "no port scan," which means Nmap will only perform **host discovery** (ping scan) and not attempt to find open ports. This is much **faster** for simply finding live hosts.
 
 ---
+
+🧠 Host Discovery with Nmap
+
+🔹 Basic Ping Scan
+> nmap -sn 192.168.1.1        # Ping scan
+> nmap -h                     # Help menu
+> man nmap                    # Manual page
+
+🔹 Check Your IP
+> ifconfig                               # Check your IP
+> nmap -sn 10.1.0.0/24                   # Basic network sweep
+> nmap -sn 10.10.22.0/24 --send-ip       # Sends raw IP packets instead of Ethernet frames
+
+🔹 Scan Multiple IP Addresses
+> nmap -sn 10.4.23.227 10.4.23.228
+> nmap -sn 10.4.23.227-240
+
+🔹 Efficient Scanning Using a File:
+vim targets.txt               # Save IPs or ranges in this file
+> nmap -sn -iL targets.txt    # Scan all listed targets
+
+⚙️ Advanced Host Discovery
+
+🔹 TCP SYN Scan
+> nmap -sn -PS 10.4.23.227      # Sends TCP SYN packet to port 80 to check if host is alive
+
+🔹 TCP ACK Scan
+> nmap -sn -PA 10.4.23.227      # Sends TCP ACK packet to bypass stateless firewalls
+
+🔹 ICMP Specific Scan
+> nmap -sn -PE 10.4.23.227 --send-ip                           # Performs standard ICMP ping discovery
+> nmap -sn -v -T4 10.4.23.227                                  # Uses default discovery methods (usually ICMP Echo + TCP SYN to port 443)
+> nmap -sn -PS21,22,25,80,445,3389,8080 -T4 10.4.20.217        # TCP SYN ping on specified ports (host discovery only)
+> sudo nmap -sS -p 21,22,25,80,445,3389,8080 -T4 10.4.20.217   # Actual port scanning (not host discovery)
+
+> nmap -sn -PS21,22,25,80,445,3389,8080 10.4.20.217            # First discover if host is up
+> sudo nmap -sS -p 21,22,25,80,445,3389,8080 10.4.20.217       # Then scan ports
+
+🔹 Note: PU137,138 → UDP ping on ports 137 and 138
+
+nmap -Pn 10.5.18.135            # Force scanning even if host seems down
+nmap -Pn -p 443 10.5.18.135     # Check closed ports (to detect firewall presence) 
+                                #If output shows filtered, it indicates a firewall is present.
