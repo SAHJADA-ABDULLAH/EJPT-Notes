@@ -40,3 +40,27 @@ NSE Script Location - ls -al /usr/share/nmap/scripts | grep -i "<scriptname>"
 > nmap -Pn -sS -sV -F -f 10.4.27.83                                        # Fragmented Scan: Splits packets into 8-byte fragments (-f) to evade basic IDSs
 > nmap -Pn -sS -sV -F -f --mtu 8 <IP>                                      # Fragmented Scan with custom MTU (8 bytes) for explicit fragmentation
 > nmap -Pn -sS -sV -p445,3389 --data-length 200 -D 10.10.23.1,10.10.23.2 <Target IP>  # Decoy Scan: Uses fake source IPs (-D) to hide true IP, adds junk data (--                                                                                           data-length)
+
+🔹 Nmap Automator (automated multi-scan script)
+# clone and run (example; your installed script name may vary)
+> git clone https://github.com/21y4d/nmapAutomator.git
+> cd nmapAutomator
+> sudo ./nmapAutomator.sh <IP> all      # runs the 'all' profile (network, ports, scripts, vulns)
+# or
+> sudo ./nmapAutomator.sh <IP> quick    # quick scans only
+> ./nmapAutomator.sh 10.10.10.11 all
+
+🔹 Masscan (very high-speed, Internet-scale discovery)
+> sudo masscan -p80,443,22 192.168.0.0/24 --rate 10000 -oG masscan_results.gnmap        # Scan specific ports across a subnet (fast)
+> grep "open tcp" masscan_results.gnmap | awk '{print $6}' | sort -u > live_hosts.txt   # Export to a format you can feed into Nmap (example: grab IPs with open ports)
+
+
+🔹 RustScan (fast port discovery + auto-pipe to Nmap)
+> sudo rustscan -a <IP> --ulimit 5000 -t 3000 -- -A -sV -oN rustscan_to_nmap.txt  # Fast scan all ports, then hand results to nmap for service/version detection.
+> rustscan -a <IP> -- -sV -p                                                      # Or explicit
+
+🔹 AutoRecon (automated per-service enumeration)
+> autorecon <IP>                                                                  # Basic usage (assumes AutoRecon installed)
+# autorecon -o outdir <IP>                                                        # Example with output dir
+
+
