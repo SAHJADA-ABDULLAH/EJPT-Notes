@@ -1,0 +1,42 @@
+🔹 Basic Host Discovery and Scanning
+
+1️⃣ Host Discovery
+> ifconfig                                # Displays network interface configuration and IP addresses
+> ip a s                                  # Shows address information for all interfaces (modern Linux standard)
+
+nmap -sn 192.31.24.1/24                   # Performs a **Ping Scan** (-sn) on the entire /24 subnet (1-254)
+                                          # Only lists hosts that are currently **up** (online)
+
+🔹 Port Scanning with Nmap
+Basic TCP Scans
+> nmap -Pn 10.4.24.205                         # Skips host discovery (ping check) and scans default 1000 ports
+> nmap -Pn -F 10.4.24.205                      # Fast scan (-F) of about 100 common ports
+> nmap -Pn -p 80 10.4.24.206                   # Scan only a single specified port (80)
+> nmap -Pn -p 80,443,3389,8080 10.4.24.205     # Scan a list of specific, multiple ports
+> nmap -T4 -Pn -p- 10.4.24.205                 # Scan ALL 65535 ports (-p-) using aggressive timing (-T4)
+> nmap -Pn -sT 10.4.24.205                     # Uses the full TCP Connect Scan (-sT) method
+
+🔹UDP Port Scan
+> nmap -sU 10.4.24.205                           # Performs a **UDP Scan** (-sU) on the target's 1000 common UDP ports
+> nmap -Pn -sU 10.4.24.205                       # Skips host discovery (-Pn) and performs a UDP Scan (-sU)
+
+🔹 Service Version and OS Detection
+> nmap -T4 -sS -sV -p- 192.31.214.3                                      # Fast timing (-T4), SYN stealth scan (-sS), Version detection (-sV), scan ALL ports (-p-)
+> nmap -T4 -sS -sV -O 192.31.214.3                                       # Fast timing, SYN scan, Version detection, and **OS detection** (-O)
+> nmap -T4 -sS -sV -O --osscan-guess -p- 192.31.214.3                    # Full scan: SYN, Version, OS detection with **aggressive guessing** (--osscan-guess), ALL                                                                            ports (-p-)
+> nmap -T4 -sS -sV --version-intensity 8 -O --osscan-guess -p- <IP>      # Full scan with high **version intensity** (more likely to identify obscure services)
+
+🔹 Nmap Scripting Engine (NSE)
+NSE Script Location - ls -al /usr/share/nmap/scripts | grep -i "<scriptname>"
+> grep -i <scriptname> /usr/share/nmap/scripts                             # To search a script
+
+🔹 Comprehensive Scan (OS, Version, Script)
+> nmap -sS -A -p- -T4 <IP address>                                         # Full, aggressive, stealth scan with all major detection features enabled
+
+🔹 Firewall Detection and IDS Evasion
+> nmap -sn 10.4.27.83                                                      # Ping scan (-sn) to check if the host is up, without scanning ports
+> nmap -Pn -sS -F 10.4.27.83                                               # Stealthy Fast Scan: Skips ping (-Pn), SYN scan (-sS), common ports (-F)
+> nmap -Pn -sA -p445,3389 10.4.27.83                                       # ACK scan (-sA) to map firewall rules on specific ports (e.g., SMB, RDP)
+> nmap -Pn -sS -sV -F -f 10.4.27.83                                        # Fragmented Scan: Splits packets into 8-byte fragments (-f) to evade basic IDSs
+> nmap -Pn -sS -sV -F -f --mtu 8 <IP>                                      # Fragmented Scan with custom MTU (8 bytes) for explicit fragmentation
+> nmap -Pn -sS -sV -p445,3389 --data-length 200                            # Decoy Scan: Uses fake source IPs (-D) to hide true IP, adds junk data (--                -D 10.10.23.1,10.10.23.2 <Target IP>                                       data-length)
