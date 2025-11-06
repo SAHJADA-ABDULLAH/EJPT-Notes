@@ -1,0 +1,48 @@
+## 🔍 Host Discovery with Nmap
+
+The Nmap tool is essential for network scanning and host discovery. Here are key commands for finding live hosts on a network.
+
+### 1. Basic Nmap Command Structure
+
+| Action                                     | Command Syntax 
+
+| **General Scan**                           | `nmap [Scan Options] target` 
+| **Ping Scan (Host Discovery)**             | `nmap -sn [target]` 
+| **Example (Single IP)**                    | `nmap -sn 192.168.1.1` 
+| **Help/Manual**                            | `nmap -h` (for quick menu) or `man nmap` (for full manual page) 
+
+---
+
+### 2. Checking Your IP Address
+
+* Use the command `ifconfig` to **check your own IP address** before scanning.
+
+---
+
+### 3. Scanning a Range or Subnet
+
+You can scan an entire subnet (CIDR notation) to quickly discover all live hosts:
+
+| Action                                       | Command Example                    | Note 
+
+| **Scan Subnet (CIDR)**                       | `nmap -sn 10.1.0.0/24`             | Scans all 256 addresses in that range. 
+| **Scan Subnet (Specific Range)**             | `nmap -sn 10.10.22.0/24 --send-ip` | The `--send-ip` option is non-standard for basic host discovery and might                                                                                           imply a specific scenario or Nmap version.
+
+---
+
+### 4. Scanning Multiple IP Addresses
+
+Nmap offers flexible ways to scan multiple targets:
+
+* **Using a Range (Dashes):**
+    * `nmap -sn 10.4.23.227-240` (Scans from 227 through 240)
+* **Using a Range (Space-Separated):**
+    * `nmap -sn 10.4.23.227 10.4.23.228`
+* **Using an Input File (Best for efficiency):**
+    1.  **Create a file:** Use a text editor like `vim` to create a file (e.g., **targets.txt**).
+    2.  **Add IPs:** Put one IP address or IP range per line inside the file.
+    3.  **Scan from file:** `nmap -sn -iL targets.txt`
+
+> **Note:** The **`-sn`** option stands for "skip port scan" or "no port scan," which means Nmap will only perform **host discovery** (ping scan) and not attempt to find open ports. This is much **faster** for simply finding live hosts.
+
+---
