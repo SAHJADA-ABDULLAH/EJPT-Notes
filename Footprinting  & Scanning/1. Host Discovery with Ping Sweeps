@@ -1,65 +1,41 @@
-## 💻 Host Discovery with Ping Sweeps: Notes
+💻 Host Discovery with Ping Sweeps: Notes
+🛠️ Tools
+1.  > ping Utility (Basic)
+2.  > fping (Fast Ping)
+3.  > nmap (Network Mapper)
+4.  > Zenmap (Nmap GUI)
 
-### 1. 🛠️ Tools
-
-The primary tools used for host discovery via ping sweeps are:
-
-1.  **`ping` Utility (Basic)**
-2.  **`fping` (Fast Ping)**
-3.  **`nmap` (Network Mapper)**
-4.  **`Zenmap` (Nmap GUI)** - **(Added)**
-
----
-
-### 2. 📡 Basic `ping` Utility Commands
-
+📡 Basic `ping` Utility Commands
 The `ping` utility uses **ICMP Echo Request** packets for host discovery.
 
-| Command                                      | Usage / Description |
+> ping www.google.com                         # Pings a hostname to resolve its IP and check connectivity. 
+> ping 192.168.20.91                          # Normal request- to check a specific IP address. 
+> ping 10.4.31.111                            # Normal request- to check a specific IP address. 
+> ping -c 5 10.4.31.111                       # Send 5 ICMP requests (`-c` specifies count). 
+> ping -b -c 1 10.10.29.0                     # Send 1 request (`-c 1`) to the **Broadcast Address** (`-b`). 
+> ping -b -c 1 10.1.0.0                       # Send 1 request (`-c 1`) to a **Network Address** (used for sweeping). 
+> sudo wireshark -i eth1                      # Use Wireshark on interface `eth1` to check the ICMP requests and replies. 
 
-| `ping www.google.com`                        | Pings a hostname to resolve its IP and check connectivity. 
-| `ping 192.168.20.91`                         | **Normal request** to check a specific IP address. 
-| `ping 10.4.31.111`                           | **Normal request** to check a specific IP address. 
-| `ping -c 5 10.4.31.111`                      | Send **5 ICMP requests** (`-c` specifies count). 
-| `ping -b -c 1 10.10.29.0`                    | Send **1 request** (`-c 1`) to the **Broadcast Address** (`-b`). 
-| `ping -b -c 1 10.1.0.0`                      | Send **1 request** (`-c 1`) to a **Network Address** (used for sweeping). 
-| `sudo wireshark -i eth1`                     | Use **Wireshark** on interface `eth1` to check the ICMP requests and replies. 
-
----
-
-### 3. 🚀 `fping` Utility Commands
-
+🚀 `fping` Utility Commands
 The `fping` utility is designed to ping multiple hosts much faster by sending packets in a round-robin fashion.
 
-| Command                                      | Usage / Description |
+> fping -h                                    # Displays the help menu for `fping` options. 
+> fping -a -g 10.10.23.0/24 2>/dev/null       # Ping sweep** (`-g` for generator) of the entire `/24` subnet. The `-a` option shows only **Alive** hosts. The `2>/dev/null` redirects error messages. 
+> fping -a 10.4.31.111                        # Checks if the single host is **Alive** (`-a`). 
 
-| `fping -h`                                   | Displays the help menu for `fping` options. 
-| `fping -a -g 10.10.23.0/24 2>/dev/null`      | **Ping sweep** (`-g` for generator) of the entire `/24` subnet. The `-a` option shows only **Alive** hosts. The                                                     `2>/dev/null` redirects error messages. 
-| `fping -a 10.4.31.111`                       | Checks if the single host is **Alive** (`-a`). 
-
----
-
-### 4. 🧭 `nmap` Utility Commands
-
+🧭 `nmap` Utility Commands
 Nmap is the powerful network scanner that provides various advanced ping sweep methods. The key here is the **`-sn`** flag, which disables the port scan and runs   **only** host discovery.
 
-| Command                                      | Usage / Description |
+> nmap -sn 10.4.31.111                         # Host Discovery** (`-sn`) for a single IP address. 
+> nmap -sn -Pn 10.4.31.111                     # Skip host discovery** (`-Pn`): Treats all hosts as online. This is used when the host is known to be up but blocks all pings. 
 
-| `nmap -sn 10.4.31.111`                       | **Host Discovery** (`-sn`) for a single IP address. 
-| `nmap -sn -Pn 10.4.31.111`                   | **Skip host discovery** (`-Pn`): Treats all hosts as online. This is used when the host is known to be up but                                                       blocks all pings. 
+🌐 ARP Scan and Zenmap (Added Detail)
+ARP Scan (Local Network)
 
----
+> nmap -sn -PR <target_range> (e.g., `nmap -sn -PR 192.168.1.0/24`)
+Mechanism: ARP Scan (`-PR`) operates at the **Data Link Layer (Layer 2)**, sending **ARP Request** frames instead of ICMP packets.
+Purpose: This method is the **most effective** for local subnets because it **bypasses firewalls** that filter Layer 3 (IP) traffic. If a host is live on the local LAN, it *must* respond to the ARP request.
 
-### 5. 🌐 ARP Scan and Zenmap (Added Detail)
-
-#### ARP Scan (Local Network)
-
-* **Tool:** `nmap`
-* **Command:** `nmap -sn -PR <target_range>` (e.g., `nmap -sn -PR 192.168.1.0/24`)
-* **Mechanism:** ARP Scan (`-PR`) operates at the **Data Link Layer (Layer 2)**, sending **ARP Request** frames instead of ICMP packets.
-* **Purpose:** This method is the **most effective** for local subnets because it **bypasses firewalls** that filter Layer 3 (IP) traffic. If a host is live on the     local LAN, it *must* respond to the ARP request.
-
-#### Zenmap Tool
-
-* **Description:** **Zenmap** is the official **Graphical User Interface (GUI)** for Nmap.
-* **Purpose:** It allows users to run Nmap commands and visualize results (host lists, network topology, service details) without needing to use the command line,      making it easier for beginners to perform host discovery and scanning.
+Zenmap Tool
+Description: Zenmap is the official **Graphical User Interface (GUI)** for Nmap.
+Purpose: It allows users to run Nmap commands and visualize results (host lists, network topology, service details) without needing to use the command line, making it easier for beginners to perform host discovery and scanning.
