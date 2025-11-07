@@ -26,7 +26,9 @@ FTP: Nmap Enumeration Scripts
 5. ftp-syst: Retrieves system information from the FTP server.
 > nmap --script ftp-syst -p 21 target-ip
 
-Phase 1: Initial Setup and Reconnaissance
+---------------------------------------------------------------------------------------------------------------
+                    Phase 1: Initial Setup and Reconnaissance using Auxiliary Modules
+---------------------------------------------------------------------------------------------------------------
 Objective: Verify the target environment and perform an initial port scan to confirm the FTP service is running.
 
 # Identify the target IP address
