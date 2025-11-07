@@ -1,71 +1,31 @@
-## 🔍 Host Discovery with Nmap
-
+🔍 Host Discovery with Nmap
 The Nmap tool is essential for network scanning and host discovery. Here are key commands for finding live hosts on a network.
 
-### 1. Basic Nmap Command Structure
+1. Basic Nmap Command Structure
+General Scan                          > nmap [Scan Options] target
+Ping Scan (Host Discovery)            > nmap -sn [target] 
+Example (Single IP)                   > nmap -sn 192.168.1.1
+Help/Manual                           > nmap -h (for quick menu) or > man nmap (for full manual page) 
 
-| Action                                     | Command Syntax 
+2. Checking Your IP Address
+Use the command ifconfig to check your own IP address before scanning.
 
-| **General Scan**                           | `nmap [Scan Options] target` 
-| **Ping Scan (Host Discovery)**             | `nmap -sn [target]` 
-| **Example (Single IP)**                    | `nmap -sn 192.168.1.1` 
-| **Help/Manual**                            | `nmap -h` (for quick menu) or `man nmap` (for full manual page) 
-
----
-
-### 2. Checking Your IP Address
-
-* Use the command `ifconfig` to **check your own IP address** before scanning.
-
----
-
-### 3. Scanning a Range or Subnet
+3. Scanning a Range or Subnet
 
 You can scan an entire subnet (CIDR notation) to quickly discover all live hosts:
 
-| Action                                       | Command Example                    | Note 
+Scan Subnet (CIDR)                     > nmap -sn 10.1.0.0/24                   # Scans all 256 addresses in that range. 
+Scan Subnet (Specific Range)           > nmap -sn 10.10.22.0/24 --send-ip       # The --send-ip option is non-standard for basic host discovery and might                                                                                           imply a specific scenario or Nmap version.
 
-| **Scan Subnet (CIDR)**                       | `nmap -sn 10.1.0.0/24`             | Scans all 256 addresses in that range. 
-| **Scan Subnet (Specific Range)**             | `nmap -sn 10.10.22.0/24 --send-ip` | The `--send-ip` option is non-standard for basic host discovery and might                                                                                           imply a specific scenario or Nmap version.
-
----
-
-### 4. Scanning Multiple IP Addresses
-
+4. Scanning Multiple IP Addresses
 Nmap offers flexible ways to scan multiple targets:
 
-* **Using a Range (Dashes):**
-    * `nmap -sn 10.4.23.227-240` (Scans from 227 through 240)
-* **Using a Range (Space-Separated):**
-    * `nmap -sn 10.4.23.227 10.4.23.228`
-* **Using an Input File (Best for efficiency):**
-    1.  **Create a file:** Use a text editor like `vim` to create a file (e.g., **targets.txt**).
-    2.  **Add IPs:** Put one IP address or IP range per line inside the file.
-    3.  **Scan from file:** `nmap -sn -iL targets.txt`
-
-> **Note:** The **`-sn`** option stands for "skip port scan" or "no port scan," which means Nmap will only perform **host discovery** (ping scan) and not attempt to find open ports. This is much **faster** for simply finding live hosts.
-
----
-
-🧠 Host Discovery with Nmap
-
-🔹 Basic Ping Scan
-> nmap -sn 192.168.1.1        # Ping scan
-> nmap -h                     # Help menu
-> man nmap                    # Manual page
-
-🔹 Check Your IP
-> ifconfig                               # Check your IP
-> nmap -sn 10.1.0.0/24                   # Basic network sweep
-> nmap -sn 10.10.22.0/24 --send-ip       # Sends raw IP packets instead of Ethernet frames
-
-🔹 Scan Multiple IP Addresses
-> nmap -sn 10.4.23.227 10.4.23.228
-> nmap -sn 10.4.23.227-240
-
-🔹 Efficient Scanning Using a File:
-vim targets.txt               # Save IPs or ranges in this file
-> nmap -sn -iL targets.txt    # Scan all listed targets
+Using a Range (Dashes):                         > nmap -sn 10.4.23.227-240               # Scans from 227 through 240
+Using a Range (Space-Separated):                > nmap -sn 10.4.23.227 10.4.23.228
+Using an Input File (Best for efficiency):
+1.  Create a file: Use a text editor like vim to create a file (e.g. - targets.txt).      > vim target.txt
+2.  Add IPs: Put one IP address or IP range per line inside the file.
+3.  Scan from file:                                                                       > nmap -sn -iL targets.txt
 
 ⚙️ Advanced Host Discovery
 
@@ -85,10 +45,9 @@ vim targets.txt               # Save IPs or ranges in this file
 > sudo nmap -sS -p 21,22,25,80,445,3389,8080 10.4.20.217       # Then scan ports
 
 🔹 Note: PU137,138 → UDP ping on ports 137 and 138
-nmap -Pn 10.5.18.135            # Force scanning even if host seems down
-nmap -Pn -p 443 10.5.18.135     # Check closed ports (to detect firewall presence) 
-                                # If output shows filtered, it indicates a firewall is present.
+
+> nmap -Pn 10.5.18.135            # Force scanning even if host seems down
+> nmap -Pn -p 443 10.5.18.135     # Check closed ports (to detect firewall presence) 
+                                  # If output shows filtered, it indicates a firewall is present.
 🔹Service Version Detection
-nmap -Pn -sV -p 80 10.5.18.135  # Assumes the host is up (skip ping), scans TCP port 80 on 10.5.18.135 and performs service/version detection to identify the HTTP                                    server and its version.
-
-
+> nmap -Pn -sV -p 80 10.5.18.135  # Assumes the host is up (skip ping), scans TCP port 80 on 10.5.18.135 and performs service/version detection to identify the HTTP server and its version.
