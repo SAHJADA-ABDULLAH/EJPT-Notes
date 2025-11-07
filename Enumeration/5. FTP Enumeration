@@ -2,6 +2,8 @@
 This workflow documents the reconnaissance, authentication attacks, and initial file retrieval against a target system running an FTP service, 
 utilizing Metasploit and basic command-line tools.
 
+FTP Port --> 21 
+
 FTP: Brute forcing attacks on FTP
 This command employs Hydra to perform a brute-force attack on an FTP service on the target using a list of usernames and passwords.
 1. username_list_path --> /usr/share/xyz/common_users.txt
