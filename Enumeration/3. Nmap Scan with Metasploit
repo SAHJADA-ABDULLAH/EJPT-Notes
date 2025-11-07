@@ -1,76 +1,32 @@
-# 🔍 Enumeration — Nmap Port Scanning & Metasploit Recon
+🔍 Enumeration — Nmap Port Scanning & Metasploit Recon
 
----
+🖥️ Target Information
+Example Target: 10.4.22.173  
 
-## 🖥️ Target Information
-> Example target used in notes: `10.4.22.173`  
-> Replace with your actual target when executing commands.
+⚙️ Nmap Scanning Commands (run from shell)
 
----
+> nmap 10.4.22.173                                               # Default Nmap Scan
+> nmap -Pn 10.4.22.173                                           # Nmap Scan without Ping Probe
+> nmap -Pn -sV -O 10.4.22.173                                    # Service Version + OS Detection
+> nmap -Pn -sV -O 10.4.22.173 -oX windows-ser.xml                # Scan + Export to XML (for importing into Metasploit)
 
-## ⚙️ Nmap Scanning Commands (run from shell)
-Use these from your regular shell to perform scans and export results.
+🧭 Metasploit: Using `db_nmap` & Workspaces
 
-### Default Nmap Scan
-```bash
-nmap 10.4.22.173
-```
+These commands are intended to be used **inside `msfconsole`** (except `service`/`msfdb init` which are run from shell).
+> service postgresql start
+> msfconsole
+> msfdb init                                                      # If DB is not initialized (Kali), run
 
-### Nmap Scan without Ping Probe
-```bash
-nmap -Pn 10.4.22.173
-```
+Metasploit workspace & `db_nmap` commands (inside msfconsole)
 
-### Service Version + OS Detection
-```bash
-nmap -Pn -sV -O 10.4.22.173
-```
+> workspace                                                       # show current workspace
+> workspace -a Nmap_MSF                                           # create/select a new workspace named 'Nmap_MSF'
+> db_nmap -Pn -sV -O 10.4.22.173                                  # run nmap and import results into DB
+> hosts                                                           # list imported hosts
+> services                                                        # list discovered services
+> vulns                                                           # list discovered vulnerabilities
+> db_import /root/windows-ser.xml                                 # alternatively import an XML file
 
-### Scan + Export to XML (for importing into Metasploit)
-```bash
-nmap -Pn -sV -O 10.4.22.173 -oX windows-ser.xml
-```
-
----
-
-## 🧭 Metasploit: Using `db_nmap` & Workspaces
-
-> These commands are intended to be used **inside `msfconsole`** (except `service`/`msfdb init` which are run from shell).
-
-### Start services & launch Metasploit (shell)
-```bash
-service postgresql start
-msfconsole
-# If DB is not initialized (Kali), run:
-msfdb init
-```
-
-### Metasploit workspace & `db_nmap` commands (inside msfconsole)
-```bash
-workspace                # show current workspace
-workspace -a Nmap_MSF    # create/select a new workspace named 'Nmap_MSF'
-db_nmap -Pn -sV -O 10.4.22.173   # run nmap and import results into DB
-hosts                    # list imported hosts
-services                 # list discovered services
-vulns                    # list discovered vulnerabilities
-db_import /root/windows-ser.xml  # alternatively import an XML file
-```
-
-<details>
-<summary><strong>Tip: When to use `db_nmap` vs `nmap` then import</strong></summary>
-
+Tip: When to use `db_nmap` vs `nmap` then import.
 - `db_nmap` runs Nmap from within Metasploit and stores results automatically.  
-- Running `nmap` externally with `-oX` gives you a portable XML file to keep in `scans/` and import later using `db_import`.  
-</details>
-
----
-
-## 🧩 Notes & Best Practices
-
-- `-Pn` treats hosts as online — use when ICMP or ping is blocked.  
-- `-sV` detects service versions; `-O` attempts OS detection. Both can be noisy.  
-- Use separate workspaces (`workspace -a <name>`) to isolate data per engagement.  
-- Keep raw scan files (`.xml`, `.nmap`, `.gnmap`) in a `scans/` folder for traceability.  
-- When importing to Metasploit, verify `db_status` to ensure DB connectivity.
-
----
+- Running `nmap` externally with `-oX` gives you a portable XML file to keep in `scans/` and import later using `db_import`. 
