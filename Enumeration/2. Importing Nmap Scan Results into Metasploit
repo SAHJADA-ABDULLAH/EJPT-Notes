@@ -1,52 +1,19 @@
-## 🪟 Importing Nmap Scan Results into Metasploit
+🪟 Importing Nmap Scan Results into Metasploit
 
-### Step-by-Step Process
+Step-by-Step Process
 
-1. **Start PostgreSQL Service**
-   ```bash
-   service postgresql start
-   ```
+1. > service postgresql start                       # Start the PostgreSQL database service, which Metasploit uses to store all data.
 
-2. **Launch Metasploit Console**
-   ```bash
-   msfconsole
-   ```
+2. > msfconsole                                     # Launch the Metasploit Framework console.
 
-3. **Check Database Status**
-   ```bash
-   db_status
-   ```
+3. > db_status                                      # Check the status of the database connection (should show 'postgresql connected').
 
-4. **View Current Workspace**
-   ```bash
-   workspace
-   ```
+4. > workspace                                      # View the current active workspace (Metasploit's way of organizing data by project).
 
-5. **Create a New Workspace**
-   ```bash
-   workspace -a win2k12
-   ```
+5. > workspace -a win2k12                           # Create a New Workspace named 'win2k12' and automatically switch to it.
 
-6. **Import Nmap Scan Results**
-   ```bash
-   db_import /root/windows-ser.xml
-   ```
+6. > db_import /root/windows-ser.xml                # Import the Nmap scan results from the specified XML file into the active database/workspace.
 
-7. **Verify Imported Hosts**
-   ```bash
-   hosts
-   ```
+7. > hosts                                          # Verify the import by listing all hosts added to the current workspace.
 
-8. **List Imported Services**
-   ```bash
-   services
-   ```
-
----
-
-## 🧩 Notes
-- The `-Pn` flag disables host discovery (treats all hosts as online).  
-- The `-sV` option detects service versions.  
-- The `-O` flag enables OS detection.  
-- The `-oX` option exports scan results in XML format (useful for importing into Metasploit).  
-- Always ensure the PostgreSQL database is running before using Metasploit’s database features.
+8. > services                                       # List all open services and ports discovered on the imported hosts.
