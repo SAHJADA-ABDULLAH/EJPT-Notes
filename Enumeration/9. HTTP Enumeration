@@ -1,0 +1,43 @@
+♦ HTTP (Hypertext Transfer Protocol) Enumeration
+
+HTTP (Hypertext Transfer Protocol) is the foundation of data communication on the web.
+→ Default Port: 80 (Regular communication)
+→ Secure Port: 443 (HTTPS with encryption)
+
+♦ General Command-Line Tools for HTTP Enumeration
+These tools are used for web fingerprinting, data transfer, and content discovery.
+
+→ whatweb <target>                       # Web fingerprinting to identify technologies, server details, and software versions.
+→ curl <target>                          # Versatile tool for transferring data with URLs (supports HTTP, HTTPS).
+→ wget <target>                          # Utility for downloading files from the web (supports recursive downloads).
+→ lynx <target>                          # Text-based web browser for viewing web pages in the terminal.
+→ browsh --startup-url <target>          # Text-based web browser that supports modern web features like JavaScript.
+→ dirb <target> <wordlist_path>          # Performs brute-force scan to find hidden directories and files on a web server.
+→ http (Netcat/Telnet/cURL)              # General reference to opening an HTTP connection for testing (Banner Grabbing).
+
+♦ Metasploit (msfconsole) HTTP Enumeration Modules
+These auxiliary modules are used within the Metasploit Framework for focused web server scanning.
+
+→ use auxiliary/scanner/http/http_version                                        # Check the HTTP version and related information from the target web server.
+→ use auxiliary/scanner/http/brute_dirs                                          # Perform a directory and file brute-force attack on a web server.
+→ use auxiliary/scanner/http/robots_txt                                          # Retrieve the robots.txt file to find potentially sensitive directories.
+
+♦ Nmap Scripting Engine (NSE) HTTP Enumeration Scripts
+These Nmap scripts are executed on port 80 to gather detailed web server information and check for vulnerabilities.
+
+→ nmap <target> -p 80 --script http-enum                                         # Enumerates directories and files to find hidden resources.
+→ nmap <target> -p 80 --script http-title                                        # Retrieves the title of the web page.
+→ nmap <target> -p 80 --script http-methods                                      # Enumerates the HTTP methods supported by the web server (e.g., GET, POST, PUT).
+→ nmap <target> -p 80 --script http-headers                                      # Retrieves HTTP headers from the target web server.
+→ nmap <target> -p 80 --script http-robots.txt                                   # Retrieves the robots.txt file.
+→ nmap <target> -p 80 --script http-banners                                      # Retrieves banner information from the HTTP server.
+→ nmap <target> -p 80 --script http-screenshot                                   # Takes a screenshot of the web page for visual inspection.
+→ nmap <target> -p 80 --script http-dirmap                                       # Maps directories on a web server based on a specified list.
+
+♦ Nmap WebDAV and Vulnerability Check Scripts
+Scripts specifically targeting WebDAV functionality or known vulnerabilities.
+
+→ nmap <target> -p 80 --script http-webdav-scan                                  # Scans for WebDAV methods and checks for common WebDAV features.
+→ nmap <target> -p 80 --script http-dav-fetch                                    # Fetches WebDAV resources.
+→ nmap <target> -p 80 --script http-vuln-cve2014-3704                            # Checks for the Drupal vulnerability CVE-2014-3704.
+→ nmap <target> -p 80 --script http-vuln-cve2017-5638                            # Checks for the Apache Struts vulnerability CVE-2017-5638.
