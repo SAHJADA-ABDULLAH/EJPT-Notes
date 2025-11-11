@@ -39,11 +39,6 @@ This command scans the specified target for the SSH service on port 22 and emplo
 brute-force attack using the “admin” username. This script will attempt to guess the password for the admin user by trying a variety of passwords.
 > nmap <target> -p 22 --script ssh-brute --script-args userdb=admin
 
-In msfconsole, the ssh_login auxiliary module is used to perform SSH login attempts on a target system to test credentials. 
-This module tries various combinations of usernames and passwords to find valid login credentials.
-> use auxiliary/scanner/ssh/ssh_login
-
-
 ♦ SSH Enumeration and Brute-Force Login (Metasploit)
 
 Secure Shell → Enumeration. Post 22         # SSH Port
