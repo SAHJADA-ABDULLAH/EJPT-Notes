@@ -41,3 +41,78 @@ Scripts specifically targeting WebDAV functionality or known vulnerabilities.
 → nmap <target> -p 80 --script http-dav-fetch                                    # Fetches WebDAV resources.
 → nmap <target> -p 80 --script http-vuln-cve2014-3704                            # Checks for the Drupal vulnerability CVE-2014-3704.
 → nmap <target> -p 80 --script http-vuln-cve2017-5638                            # Checks for the Apache Struts vulnerability CVE-2017-5638.
+
+♦ Web Server Enumeration (Metasploit)
+
+HTTP → 80                                  # Default port for insecure web traffic
+HTTPS → 443                                # Default port for secure web traffic (SSL/TLS)
+ifconfig → 192.140.160.2                   # Your local IP address
+target IP → 192.140.160.3                  # The target machine's IP address
+→ service postgresql start                   # Start the required database service for Metasploit
+→ msfconsole                               # Start the Metasploit Framework console
+
+♦ Metasploit Configuration
+→ workspace -a Web_Enum                    # Create and switch to a Metasploit workspace
+→ setg RHOSTS 192.140.160.3                  # Globally set the target IP (RHOSTS)
+→ setg RHOST 192.140.160.3                   # Set RHOST (for single host modules)
+
+♦ Web Server Version Scanning
+→ Search http                              # Search for HTTP-related modules
+→ Search type:auxiliary name:http            # Refine the search
+→ Use auxiliary/scanner/http/http_version    # Load the HTTP version scanner module
+→ Show options                             # View required options
+# For SSL Certificate:
+# Set RPORT 443                            # Set the remote port to 443 for HTTPS
+# Set SSL true                             # Enable SSL for the scan
+→ run                                      # Execute the module
+
+♦ Header Analysis and Information Gathering
+→ Search type:auxiliary name:http            # Search for HTTP-related auxiliary modules
+→ Use auxiliary/scanner/http/http_header     # Load the HTTP header analysis module
+→ Show options
+→ run                                      # Execute the module to retrieve HTTP headers
+
+♦ robots.txt Retrieval
+→ Search robots_txt                        # Search for the robots.txt module
+→ Use 1                                    # Use the first module result (auxiliary/scanner/http/robots_txt)
+→ Show options
+→ run                                      # Execute the module to retrieve and display robots.txt content
+
+♦ Directory and File Content Discovery (Metasploit)
+→ Search dir_scanner                       # Search for a general directory scanner module
+→ Use 1                                    # Use the first module result (e.g., auxiliary/scanner/http/dir_scanner)
+→ Show options
+→ run
+→ Search files_dir                         # Search for a file/directory enumeration module
+→ Use 1
+→ Show options
+→ run
+
+♦ Apache User Directory Enumeration
+→ Search apache_userdir_enum               # Search for the Apache user directory enumeration module
+→ Use 1
+→ Show options
+→ Set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt # Set the file containing user names
+→ run                                      # Execute the module to check for valid user directories (~user)
+
+♦ Manual Content Checks (Outside of Metasploit)
+→ curl http://192.140.160.3/data/          # Use curl to request a specific directory/path
+→ curl http://192.140.160.3/securel        # Use curl to request another specific directory/path
+
+♦ HTTP Login Brute-Force Attack (Metasploit)
+→ Search http-login                        # Search for the HTTP login brute-force module
+→ Use 4                                    # Use the relevant module (e.g., auxiliary/scanner/http/http_login)
+→ Show options
+→ Set AUTH_URI /secure/                    # Set the URI of the login page
+→ Unset USERPASS_FILE                      # Clear any existing combined user:pass file setting
+→ Set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt # Set the username list
+→ Set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_password.txt # Set the password list
+→ Set VERBOSE false                        # Disable verbose output
+→ run
+
+♦ Custom User File Creation (Demonstration)
+This shows how to quickly create a simple user list for testing.
+→ Set echo "root" > user.txt                 # Create a file named user.txt containing the username 'root'
+→ Set USER_FILE /root/user.txt               # Set the path to the newly created user file
+→ Set Verbose true                         # Enable verbose output
+→ run
