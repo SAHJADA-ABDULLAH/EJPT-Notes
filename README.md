@@ -1,6 +1,6 @@
 # EJPT-Notes
 
-📚 EJPT Notes - Ethical Junior Penetration Testing Documentation  
+📚 EJPT Notes - ELearn Junior Penetration Testing Documentation  
 
 A collection of penetration testing methodologies, tool guides, and security assessment procedures. Includes Nmap enumeration, Metasploit integration, and various security testing techniques for educational purposes.  
 
