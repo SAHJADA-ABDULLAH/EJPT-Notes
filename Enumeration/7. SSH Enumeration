@@ -1,0 +1,44 @@
+🐚 SSH Enumeration
+SSH (Secure Shell) is a network protocol used to securely access and manage remote systems over an unsecured network. 
+It operates over TCP port 22 by default but can be configured to use different ports for increased security. 
+It is widely used to administer servers and transfer data securely over networks.
+
+SSH: Nmap Enumeration Scripts
+ssh-auth-methods - Identifies the authentication methods supported by the SSH server.
+> nmap --script ssh-auth-methods -p 22 target-ip
+
+ssh-brute - Performs a brute-force attack on SSH credentials using a list of usernames and passwords.
+> nmap --script ssh-brute -p 22 target-ip
+
+ssh-enum-algos - Enumerates the cryptographic algorithms supported by the SSH server.
+> nmap --script ssh-enum-algos -p 22 target-ip
+
+ssh-hostkey - Retrieves and displays the public SSH host keys for the target server.
+> nmap --script ssh-hostkey -p 22 target-ip
+
+ssh-vuln-cve2018-15473 - Checks for the SSH vulnerability identified by CVE-2018-15473, which allows attackers to enumerate valid usernames.
+> nmap --script ssh-vuln-cve2018-15473 -p 22 target-ip
+
+ssh2-enum-algos - Lists the algorithms used in SSH connections.
+> nmap --script ssh2-enum-algos -p 22 target-ip
+
+ssh-dss - Checks for the use of DSS (Digital Signature Standard) keys in SSH.
+> nmap --script ssh-dss -p 22 target-ip
+
+nc 22: This command uses the Netcat utility to connect to the specified target on port 22, commonly used for SSH communication. 
+This process is also known as “Banner Grabbing.”
+
+Banner Grabbing is a technique used to gather information about a service running on a specific port, such as the version of the software and the operating system.
+
+SSH: SSH Dictionary Attack
+This command uses Hydra to perform a brute-force attack on the SSH service of the target machine using the specified username and 
+the rockyou.txt wordlist for password guessing. Hydra will try each password from the rockyou.txt file to find a match for the given username.
+> hydra -l <user> -P /usr/share/wordlists/rockyou.txt <target> ssh
+
+This command scans the specified target for the SSH service on port 22 and employs Nmap’s “ssh-brute” script to perform a 
+brute-force attack using the “admin” username. This script will attempt to guess the password for the admin user by trying a variety of passwords.
+> nmap <target> -p 22 --script ssh-brute --script-args userdb=admin
+
+In msfconsole, the ssh_login auxiliary module is used to perform SSH login attempts on a target system to test credentials. 
+This module tries various combinations of usernames and passwords to find valid login credentials.
+> use auxiliary/scanner/ssh/ssh_login
