@@ -1,0 +1,25 @@
+♦ SMTP Enumeration (Metasploit)
+
+Simple mail Transfer Protocol → 25, 465, 587 (Standard ports, 465/587 often for SSL/TLS)
+ifconfig → 192.108.85.2                      # Your local IP address
+target IP → 192.108.85.3                     # The target machine's IP address
+
+→ service postgresql Start                   # Start the required database service for Metasploit
+→ msfconsole                                 # Start the Metasploit Framework console
+
+♦ Metasploit Configuration
+→ workspace -a SMTP_Enum                     # Create and switch to a Metasploit workspace
+→ setg RHOSTS 192.108.85.3                   # Globally set the target IP (RHOSTS)
+→ setg RHOST 192.108.85.3                    # Globally set the target IP (RHOST)
+
+♦ SMTP Version Scanning
+→ Search type:auxiliary name:smtp            # Search for SMTP-related auxiliary modules
+→ Use auxiliary/scanner/smtp/smtp_version    # Load the SMTP version scanner module
+→ Show options                               # View required options
+→ run                                        # Execute the module
+
+♦ SMTP User Enumeration (smb_enum)
+→ Search smtp-enum                           # Search for the specific user enumeration module
+→ Use auxiliary/scanner/smtp/smtp_enum       # Load the SMTP user enumeration module
+→ Show options                               # View required options
+→ run                                        # Execute the module
