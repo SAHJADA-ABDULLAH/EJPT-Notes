@@ -1,0 +1,36 @@
+## 🔍 Nikto – Web Server Vulnerability Scanner
+
+**Nikto** is a web server scanner used to identify outdated software, dangerous files, misconfigurations, and known vulnerabilities.
+
+Nikto performs thousands of checks against web servers and reports potential security issues.
+
+```bash
+# Basic web server scan
+nikto -h https://www.example.com
+
+# Scan a specific port
+nikto -h https://www.example.com -p 8080
+
+# Scan multiple hosts
+nikto -h https://www.example1.com https://www.example2.com
+
+# Save output to file
+nikto -h https://www.example.com -o output.txt
+
+# Suppress all output (useful for scripting)
+nikto -h https://www.example.com -o /dev/null
+
+# Full scan with tuning options
+nikto -h https://www.example.com -maxtime 3600 -Tuning 8
+
+# SSL certificate checks
+nikto -h https://www.example.com -ssl
+
+# Scan with authentication
+nikto -h https://www.example.com -id admin:password
+
+# Scan specific paths
+nikto -h https://www.example.com -root /app,/secure
+
+# Disable specific checks (e.g., XSS)
+nikto -h https://www.example.com -C all,-XSS
