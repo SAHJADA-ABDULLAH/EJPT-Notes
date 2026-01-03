@@ -1,0 +1,32 @@
+ 📂 Directory Enumeration – Gobuster
+
+**Gobuster** is a fast command-line tool used for directory and file brute-forcing on web servers.  
+It helps uncover hidden directories, files, APIs, and backup resources that may expose sensitive functionality or misconfigurations during web penetration testing.
+
+Gobuster works by sending HTTP requests using a wordlist and identifying valid responses based on status codes, response length, and extensions.
+
+🔹 Common Gobuster Usage
+
+# Basic directory enumeration
+gobuster dir -u https://www.example.com -w common.txt
+
+# Use custom wordlist and file extensions
+gobuster dir -u https://www.example.com -w custom.txt -x php,html,txt
+
+# Recursive enumeration (scan discovered subdirectories)
+gobuster dir -u https://www.example.com -w wordlist.txt -r
+
+# Start enumeration from a specific path
+gobuster dir -u https://www.example.com/subdir/ -w common.txt
+
+# Filter results by HTTP status codes
+gobuster dir -u https://www.example.com -w wordlist.txt -x php,html -s 200,204,301,302
+
+# Use multiple HTTP methods
+gobuster dir -u https://www.example.com -w wordlist.txt -x php -X GET,POST
+
+# Add URL path prefix
+gobuster dir -u https://www.example.com -w wordlist.txt -P /app/
+
+# Ignore response length to reduce false positives
+gobuster dir -u https://www.example.com -w wordlist.txt -z
